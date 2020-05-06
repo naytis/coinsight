@@ -109,4 +109,20 @@ final class PortfoliosTest extends ApiTestCase
                 ],
             ]);
     }
+
+    public function test_update_portfolio()
+    {
+        $portfolioId = factory(Portfolio::class)->create()->id;
+        $this
+            ->apiPut("/portfolios/{$portfolioId}", [
+                'name' => 'updated name'
+            ])
+            ->assertStatus(Response::HTTP_OK)
+            ->assertJsonStructure([
+                'data' => [
+                    'id',
+                    'name',
+                ],
+            ]);
+    }
 }
