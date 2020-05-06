@@ -21,4 +21,9 @@ final class Transaction extends Model
     {
         return $this->belongsTo(Coin::class);
     }
+
+    public function portfolio(): BelongsTo
+    {
+        return $this->belongsTo(Portfolio::class);
+    }
 }

@@ -57,7 +57,11 @@ final class CreateTransactionInteractor
         $currentValue = $this->calculator->value($request->quantity, $coinMarketData->price);
         $valueChange = $this->calculator->valueChange($currentValue, $cost);
 
-        $transactionEntity = TransactionEntity::create($transaction, $cost, $currentValue, $valueChange);
+        $transactionEntity = TransactionEntity::fromModel($transaction);
+
+        $transactionEntity->cost = $cost;
+        $transactionEntity->currentValue = $currentValue;
+        $transactionEntity->valueChange = $valueChange;
 
         return new CreateTransactionResponse([
             'transaction' => $transactionEntity,

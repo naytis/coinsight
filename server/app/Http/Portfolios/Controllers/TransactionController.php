@@ -9,8 +9,12 @@ use App\Domain\Portfolios\Interactors\Transactions\CreateTransactionInteractor;
 use App\Domain\Portfolios\Interactors\Transactions\CreateTransactionRequest;
 use App\Domain\Portfolios\Interactors\Transactions\GetTransactionsInteractor;
 use App\Domain\Portfolios\Interactors\Transactions\GetTransactionsRequest;
+use App\Domain\Portfolios\Interactors\Transactions\UpdateTransactionByIdInteractor;
+use App\Domain\Portfolios\Interactors\Transactions\UpdateTransactionByIdRequest;
+use App\Http\Common\Resources\MutationResource;
 use App\Http\Portfolios\Requests\CreateTransactionApiRequest;
 use App\Http\Portfolios\Requests\GetTransactionApiRequest;
+use App\Http\Portfolios\Requests\UpdateTransactionByIdApiRequest;
 use App\Http\Portfolios\Resources\TransactionCollectionResource;
 use App\Http\Portfolios\Resources\TransactionResource;
 use App\Http\Common\ApiResponse;
@@ -26,7 +30,7 @@ final class TransactionController
                 'userId' => $request->userId(),
                 'portfolioId' => $request->portfolioId(),
                 'coinId' => $request->coinId(),
-                'type' => new TransactionType($request->type()),
+                'type' => $request->type(),
                 'pricePerCoin' => $request->pricePerCoin(),
                 'quantity' => $request->quantity(),
                 'fee' => $request->fee(),
@@ -49,5 +53,26 @@ final class TransactionController
             ->transactions;
 
         return ApiResponse::success(new TransactionCollectionResource($transactions));
+    }
+
+    public function updateTransactionById(
+        UpdateTransactionByIdApiRequest $request,
+        UpdateTransactionByIdInteractor $updateTransactionByIdInteractor
+    ): ApiResponse {
+        $transaction = $updateTransactionByIdInteractor
+            ->execute(new UpdateTransactionByIdRequest([
+                'transactionId' => $request->id(),
+                'userId' => $request->userId(),
+                'portfolioId' => $request->portfolioId(),
+                'coinId' => $request->coinId(),
+                'type' => $request->type(),
+                'pricePerCoin' => $request->pricePerCoin(),
+                'quantity' => $request->quantity(),
+                'fee' => $request->fee(),
+                'datetime' => $request->datetime(),
+            ]))
+            ->transaction;
+
+        return ApiResponse::success(new TransactionResource($transaction));
     }
 }

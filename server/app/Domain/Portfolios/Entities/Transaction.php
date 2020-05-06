@@ -18,17 +18,12 @@ final class Transaction extends DataTransferObject
     public float $pricePerCoin;
     public float $quantity;
     public float $fee;
-    public float $cost;
-    public float $currentValue;
-    public float $valueChange;
+    public ?float $cost;
+    public ?float $currentValue;
+    public ?float $valueChange;
     public Carbon $datetime;
 
-    public static function create(
-        TransactionModel $transaction,
-        float $cost,
-        float $currentValue,
-        float $valueChange
-    ): self {
+    public static function fromModel(TransactionModel $transaction): self {
         return new static([
             'id' => $transaction->id,
             'coin' => Coin::fromModel($transaction->coin),
@@ -36,9 +31,6 @@ final class Transaction extends DataTransferObject
             'pricePerCoin' => $transaction->price_per_coin,
             'quantity' => $transaction->quantity,
             'fee' => $transaction->fee,
-            'cost' => $cost,
-            'currentValue' => $currentValue,
-            'valueChange' => $valueChange,
             'datetime' => $transaction->datetime,
         ]);
     }

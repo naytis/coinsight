@@ -34,36 +34,36 @@ final class TransactionsTest extends ApiTestCase
 
     public function test_create_transaction()
     {
-        $response = $this->apiPost('/transactions', [
-            'portfolio_id' => $this->portfolioId,
-            'coin_id' => $this->coinId,
-            'type' => TransactionType::BUY,
-            'price_per_coin' => 1,
-            'quantity' => 1,
-            'fee' => 1,
-            'datetime' => now(),
-        ]);
-
-        $response->assertStatus(Response::HTTP_OK)->assertJsonStructure([
-            'data' => [
-                'id',
-                'coin' => [
+        $this
+            ->apiPost('/transactions', [
+                'portfolio_id' => $this->portfolioId,
+                'coin_id' => $this->coinId,
+                'type' => TransactionType::BUY,
+                'price_per_coin' => 1,
+                'quantity' => 1,
+                'fee' => 1,
+                'datetime' => now(),
+            ])
+            ->assertStatus(Response::HTTP_OK)
+            ->assertJsonStructure([
+                'data' => [
                     'id',
-                    'name',
-                    'symbol',
-                    'icon',
+                    'coin' => [
+                        'id',
+                        'name',
+                        'symbol',
+                        'icon',
+                    ],
+                    'type',
+                    'price_per_coin',
+                    'quantity',
+                    'fee',
+                    'cost',
+                    'current_value',
+                    'value_change',
+                    'datetime',
                 ],
-                'type',
-                'price_per_coin',
-                'quantity',
-                'fee',
-                'cost',
-                'current_value',
-                'value_change',
-                'datetime',
-            ],
-            'meta' => [],
-        ]);
+            ]);
     }
 
     public function test_get_transactions()
@@ -78,33 +78,71 @@ final class TransactionsTest extends ApiTestCase
             'coin_id' => $this->coinId,
         ]);
 
-        $response = $this->apiGet('/transactions', [
-            'portfolio_id' => $this->portfolioId,
-        ]);
-
-        $response->assertStatus(Response::HTTP_OK)->assertJsonStructure([
-            'data' => [
-                'transactions' => [
-                    '*' => [
-                        'id',
-                        'coin' => [
+        $this
+            ->apiGet('/transactions', [
+                'portfolio_id' => $this->portfolioId,
+            ])
+            ->assertStatus(Response::HTTP_OK)
+            ->assertJsonStructure([
+                'data' => [
+                    'transactions' => [
+                        '*' => [
                             'id',
-                            'name',
-                            'symbol',
-                            'icon',
+                            'coin' => [
+                                'id',
+                                'name',
+                                'symbol',
+                                'icon',
+                            ],
+                            'type',
+                            'price_per_coin',
+                            'quantity',
+                            'fee',
+                            'cost',
+                            'current_value',
+                            'value_change',
+                            'datetime',
                         ],
-                        'type',
-                        'price_per_coin',
-                        'quantity',
-                        'fee',
-                        'cost',
-                        'current_value',
-                        'value_change',
-                        'datetime',
                     ],
                 ],
-            ],
-            'meta' => [],
+            ]);
+    }
+
+    public function test_update_transaction()
+    {
+        $transactionId = DB::table('transactions')->insertGetId([
+            'type' => TransactionType::BUY,
+            'price_per_coin' => 1,
+            'quantity' => 1,
+            'fee' => 1,
+            'datetime' => now(),
+            'portfolio_id' => $this->portfolioId,
+            'coin_id' => $this->coinId,
         ]);
+
+        $this
+            ->apiPut("/transactions/{$transactionId}", [
+                'price_per_coin' => 2,
+            ])
+            ->assertStatus(Response::HTTP_OK)
+            ->assertJsonStructure([
+                'data' => [
+                    'id',
+                    'coin' => [
+                        'id',
+                        'name',
+                        'symbol',
+                        'icon',
+                    ],
+                    'type',
+                    'price_per_coin',
+                    'quantity',
+                    'fee',
+                    'cost',
+                    'current_value',
+                    'value_change',
+                    'datetime',
+                ],
+            ]);
     }
 }

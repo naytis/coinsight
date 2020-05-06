@@ -60,6 +60,7 @@ Route::namespace('Portfolios\Controllers')->group(function () {
     ], function () {
         Route::post('/', 'TransactionController@createTransaction');
         Route::get('/', 'TransactionController@getTransactions');
+        Route::put('/{id}', 'TransactionController@updateTransactionById');
     });
 });
 

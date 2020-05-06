@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Http\Portfolios\Requests;
 
+use App\Domain\Portfolios\Enums\TransactionType;
 use App\Http\Common\Requests\ApiRequest;
 use App\Http\Common\Requests\AuthContextTrait;
 use Carbon\Carbon;
@@ -35,9 +36,9 @@ final class CreateTransactionApiRequest extends ApiRequest
         return (int) $this->get('coin_id');
     }
 
-    public function type(): string
+    public function type(): TransactionType
     {
-        return $this->get('type');
+        return new TransactionType($this->get('type'));
     }
 
     public function pricePerCoin(): float

@@ -52,7 +52,12 @@ final class GetTransactionsInteractor
                 );
                 $valueChange = $this->calculator->valueChange($currentValue, $cost);
 
-                return TransactionEntity::create($transaction, $cost, $currentValue, $valueChange);
+                $transactionEntity = TransactionEntity::fromModel($transaction);
+                $transactionEntity->cost = $cost;
+                $transactionEntity->currentValue = $currentValue;
+                $transactionEntity->valueChange = $valueChange;
+
+                return $transactionEntity;
             }
         );
 
