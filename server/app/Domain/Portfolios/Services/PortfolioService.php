@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace App\Domain\Portfolios\Services;
 
-use App\Domain\Common\Exceptions\ModelNotFound;
 use App\Domain\Portfolios\Exceptions\PortfolioNotFound;
 use App\Domain\Portfolios\Models\Portfolio;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 
 final class PortfolioService
 {
@@ -18,7 +18,7 @@ final class PortfolioService
                 ->whereId($portfolioId)
                 ->whereUserId($userId)
                 ->firstOrFail();
-        } catch (ModelNotFound $exception) {
+        } catch (ModelNotFoundException $exception) {
             throw new PortfolioNotFound();
         }
     }
