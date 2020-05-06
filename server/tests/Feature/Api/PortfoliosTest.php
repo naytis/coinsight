@@ -125,4 +125,17 @@ final class PortfoliosTest extends ApiTestCase
                 ],
             ]);
     }
+
+    public function test_delete_portfolio()
+    {
+        $portfolioId = factory(Portfolio::class)->create()->id;
+        $this
+            ->apiDelete("/portfolios/{$portfolioId}")
+            ->assertStatus(Response::HTTP_OK)
+            ->assertJsonStructure([
+                'data' => [
+                    'id',
+                ],
+            ]);
+    }
 }

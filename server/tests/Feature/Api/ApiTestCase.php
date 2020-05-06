@@ -49,6 +49,13 @@ abstract class ApiTestCase extends TestCase
         return parent::putJson($uri, $data, $this->headers);
     }
 
+    public function apiDelete(string $endpoint, array $data = []): TestResponse
+    {
+        $uri = $this->getEndpointUri($endpoint);
+
+        return parent::deleteJson($uri, $data, $this->headers);
+    }
+
     private function getEndpointUri(string $endpoint, array $data = []): string
     {
         $uri = trim(self::API_PREFIX, '/') . '/' . trim($endpoint, '/');

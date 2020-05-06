@@ -51,6 +51,7 @@ Route::namespace('Portfolios\Controllers')->group(function () {
         Route::get('/', 'PortfolioController@getPortfolios');
         Route::get('/{id}', 'PortfolioController@getPortfolioReportById');
         Route::put('/{id}', 'PortfolioController@updatePortfolioById');
+        Route::delete('/{id}', 'PortfolioController@deletePortfolioById');
     });
 
     Route::group([
