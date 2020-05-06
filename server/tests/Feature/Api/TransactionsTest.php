@@ -145,4 +145,26 @@ final class TransactionsTest extends ApiTestCase
                 ],
             ]);
     }
+
+    public function test_delete_transaction()
+    {
+        $transactionId = DB::table('transactions')->insertGetId([
+            'type' => TransactionType::BUY,
+            'price_per_coin' => 1,
+            'quantity' => 1,
+            'fee' => 1,
+            'datetime' => now(),
+            'portfolio_id' => $this->portfolioId,
+            'coin_id' => $this->coinId,
+        ]);
+
+        $this
+            ->apiDelete("/transactions/{$transactionId}")
+            ->assertStatus(Response::HTTP_OK)
+            ->assertJsonStructure([
+                'data' => [
+                    'id',
+                ],
+            ]);
+    }
 }

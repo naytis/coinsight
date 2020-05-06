@@ -4,16 +4,18 @@ declare(strict_types=1);
 
 namespace App\Http\Portfolios\Controllers;
 
-use App\Domain\Portfolios\Enums\TransactionType;
 use App\Domain\Portfolios\Interactors\Transactions\CreateTransactionInteractor;
 use App\Domain\Portfolios\Interactors\Transactions\CreateTransactionRequest;
+use App\Domain\Portfolios\Interactors\Transactions\DeleteTransactionByIdInteractor;
+use App\Domain\Portfolios\Interactors\Transactions\DeleteTransactionByIdRequest;
 use App\Domain\Portfolios\Interactors\Transactions\GetTransactionsInteractor;
 use App\Domain\Portfolios\Interactors\Transactions\GetTransactionsRequest;
 use App\Domain\Portfolios\Interactors\Transactions\UpdateTransactionByIdInteractor;
 use App\Domain\Portfolios\Interactors\Transactions\UpdateTransactionByIdRequest;
 use App\Http\Common\Resources\IdResource;
 use App\Http\Portfolios\Requests\CreateTransactionApiRequest;
-use App\Http\Portfolios\Requests\GetTransactionApiRequest;
+use App\Http\Portfolios\Requests\DeleteTransactionByIdApiRequest;
+use App\Http\Portfolios\Requests\GetTransactionsApiRequest;
 use App\Http\Portfolios\Requests\UpdateTransactionByIdApiRequest;
 use App\Http\Portfolios\Resources\TransactionCollectionResource;
 use App\Http\Portfolios\Resources\TransactionResource;
@@ -42,7 +44,7 @@ final class TransactionController
     }
 
     public function getTransactions(
-        GetTransactionApiRequest $request,
+        GetTransactionsApiRequest $request,
         GetTransactionsInteractor $transactionsInteractor
     ): ApiResponse {
         $transactions = $transactionsInteractor
@@ -74,5 +76,19 @@ final class TransactionController
             ->transaction;
 
         return ApiResponse::success(new TransactionResource($transaction));
+    }
+
+    public function deleteTransactionById(
+        DeleteTransactionByIdApiRequest $request,
+        DeleteTransactionByIdInteractor $deleteTransactionByIdInteractor
+    ): ApiResponse {
+        $deleteTransactionResponse = $deleteTransactionByIdInteractor->execute(
+            new DeleteTransactionByIdRequest([
+                'userId' => $request->userId(),
+                'transactionId' => $request->id(),
+            ])
+        );
+
+        return ApiResponse::success(new IdResource($deleteTransactionResponse));
     }
 }

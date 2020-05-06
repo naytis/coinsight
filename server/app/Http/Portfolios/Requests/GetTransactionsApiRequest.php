@@ -7,7 +7,7 @@ namespace App\Http\Portfolios\Requests;
 use App\Http\Common\Requests\ApiRequest;
 use App\Http\Common\Requests\AuthContextTrait;
 
-final class GetTransactionApiRequest extends ApiRequest
+final class GetTransactionsApiRequest extends ApiRequest
 {
     use AuthContextTrait;
 

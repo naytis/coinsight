@@ -61,6 +61,7 @@ Route::namespace('Portfolios\Controllers')->group(function () {
         Route::post('/', 'TransactionController@createTransaction');
         Route::get('/', 'TransactionController@getTransactions');
         Route::put('/{id}', 'TransactionController@updateTransactionById');
+        Route::delete('/{id}', 'TransactionController@deleteTransactionById');
     });
 });
 
