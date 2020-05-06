@@ -11,7 +11,7 @@ use App\Domain\Portfolios\Interactors\Transactions\GetTransactionsInteractor;
 use App\Domain\Portfolios\Interactors\Transactions\GetTransactionsRequest;
 use App\Domain\Portfolios\Interactors\Transactions\UpdateTransactionByIdInteractor;
 use App\Domain\Portfolios\Interactors\Transactions\UpdateTransactionByIdRequest;
-use App\Http\Common\Resources\MutationResource;
+use App\Http\Common\Resources\IdResource;
 use App\Http\Portfolios\Requests\CreateTransactionApiRequest;
 use App\Http\Portfolios\Requests\GetTransactionApiRequest;
 use App\Http\Portfolios\Requests\UpdateTransactionByIdApiRequest;

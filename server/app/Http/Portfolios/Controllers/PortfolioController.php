@@ -14,7 +14,7 @@ use App\Domain\Portfolios\Interactors\Portfolios\GetPortfoliosInteractor;
 use App\Domain\Portfolios\Interactors\Portfolios\GetPortfoliosRequest;
 use App\Domain\Portfolios\Interactors\Portfolios\UpdatePortfolioByIdInteractor;
 use App\Domain\Portfolios\Interactors\Portfolios\UpdatePortfolioByIdRequest;
-use App\Http\Common\Resources\MutationResource;
+use App\Http\Common\Resources\IdResource;
 use App\Http\Portfolios\Requests\CreatePortfolioApiRequest;
 use App\Http\Portfolios\Requests\DeletePortfolioByIdApiRequest;
 use App\Http\Portfolios\Requests\GetPortfolioReportByIdApiRequest;
@@ -106,6 +106,6 @@ final class PortfolioController
             ])
         );
 
-        return ApiResponse::success(new MutationResource($deletedPortfolioResponse));
+        return ApiResponse::success(new IdResource($deletedPortfolioResponse));
     }
 }
