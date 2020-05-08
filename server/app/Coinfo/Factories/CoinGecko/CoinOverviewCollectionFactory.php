@@ -21,7 +21,8 @@ final class CoinOverviewCollectionFactory
                     'price' => $coin['current_price'],
                     'priceChange24h' => $coin['price_change_percentage_24h'] ?? null,
                     'marketCap' => $coin['market_cap'],
-                    'volume' => $coin['total_volume']
+                    'volume' => $coin['total_volume'],
+                    'sparkline' => $coin['sparkline_7d'] ? $coin['sparkline_7d']['price'] : null,
                 ]);
             },
             $data

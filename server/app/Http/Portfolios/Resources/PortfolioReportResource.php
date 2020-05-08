@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Http\Portfolios\Resources;
 
 use App\Domain\Portfolios\Entities\Asset;
+use App\Domain\Portfolios\Entities\ValueByTime;
 use App\Http\Markets\Resources\CoinResource;
 use App\Support\Contracts\Response;
 use Illuminate\Http\Resources\Json\JsonResource;
@@ -27,6 +28,10 @@ final class PortfolioReportResource extends JsonResource implements Response
                 'net_profit' => $asset->netProfit,
                 'percent_change' => $asset->valueChange,
                 'share' => $asset->share,
+            ]),
+            'value_by_time' => $this->valueByTime->map(fn (ValueByTime $valueByTime) => [
+                'timestamp' => $valueByTime->datetime->timestamp,
+                'value' => $valueByTime->value,
             ]),
         ];
     }

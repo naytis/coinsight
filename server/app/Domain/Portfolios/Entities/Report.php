@@ -13,4 +13,5 @@ final class Report extends DataTransferObject
     public float $totalValue;
     public float $totalValueChange;
     public Collection $assets;
+    public Collection $valueByTime;
 }

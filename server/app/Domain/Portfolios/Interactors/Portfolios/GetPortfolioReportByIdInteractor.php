@@ -9,6 +9,7 @@ use App\Domain\Markets\Entities\Coin;
 use App\Domain\Portfolios\Entities\Asset;
 use App\Domain\Portfolios\Entities\Portfolio;
 use App\Domain\Portfolios\Entities\Report;
+use App\Domain\Portfolios\Entities\ValueByTime;
 use App\Domain\Portfolios\Enums\TransactionType;
 use App\Domain\Portfolios\Services\PortfolioService;
 use App\Domain\Portfolios\Services\FinanceCalculator;
@@ -46,6 +47,7 @@ final class GetPortfolioReportByIdInteractor
         $portfolioTotalValue = 0;
         $portfolioTotalCost = 0;
         $assets = collect();
+        $assetsValuesByTime = [];
 
         foreach ($portfolioCoins as $coinName => $transactions) {
             $coinMarketOverview = $coinsMarketOverview->firstWhere('name', $coinName);
@@ -92,7 +94,13 @@ final class GetPortfolioReportByIdInteractor
                 'netProfit' => $assetNetProfit,
                 'valueChange' => $assetValueChange
             ]);
+
+            $assetsValuesByTime[] = $this->getAssetValueByTime(
+                $assetHoldings, $coinMarketOverview->sparkline
+            );
         }
+
+        $portfolioValueByTime = $this->getPortfolioValueByTime($assetsValuesByTime);
 
         foreach ($assets as $asset) {
             $asset->share = $asset->holdings > 0
@@ -107,10 +115,52 @@ final class GetPortfolioReportByIdInteractor
             'totalValue' => $portfolioTotalValue,
             'totalValueChange' => $portfolioValueChange,
             'assets' => $assets,
+            'valueByTime' => collect($portfolioValueByTime),
         ]);
 
         return new GetPortfolioReportByIdResponse([
             'report' => $portfolioReport,
         ]);
+    }
+
+    private function getAssetValueByTime(float $holdings, array $sparkline): array
+    {
+        $priceByTime = [];
+        $dateStart = now()->subDays(7);
+
+        for ($i = 0; $i < count($sparkline); $i++) {
+            $priceByTime[] = new ValueByTime([
+                'datetime' => $dateStart->clone()->addHours($i),
+                'value' => $sparkline[$i],
+            ]);
+        }
+
+        $valueByTime = [];
+
+        foreach ($priceByTime as $item) {
+            $valueByTime[] = new ValueByTime([
+                'datetime' => $item->datetime,
+                'value' => $holdings * $item->value,
+            ]);
+        }
+
+        return $valueByTime;
+    }
+
+    private function getPortfolioValueByTime(array $assetsValueByTime): array
+    {
+        $portfolioValueByTime = [];
+        for ($i = 0; $i < count($assetsValueByTime[0]); $i++) {
+            $portfolioValue = 0;
+            for ($j = 0; $j < count($assetsValueByTime); $j++) {
+                $portfolioValue += $assetsValueByTime[$j][$i]->value;
+            }
+
+            $portfolioValueByTime[] = new ValueByTime([
+                'datetime' => $assetsValueByTime[0][$i]->datetime,
+                'value' => $portfolioValue,
+            ]);
+        }
+        return $portfolioValueByTime;
     }
 }

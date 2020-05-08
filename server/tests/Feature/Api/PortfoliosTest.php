@@ -42,7 +42,6 @@ final class PortfoliosTest extends ApiTestCase
 
         $this
             ->apiGet('/portfolios')
-            ->dump()
             ->assertStatus(Response::HTTP_OK)
             ->assertJsonStructure([
                 'data' => [
@@ -104,6 +103,12 @@ final class PortfoliosTest extends ApiTestCase
                             'net_profit',
                             'percent_change',
                             'share',
+                        ],
+                    ],
+                    'value_by_time' => [
+                        '*' => [
+                            'timestamp',
+                            'value',
                         ],
                     ],
                 ],
