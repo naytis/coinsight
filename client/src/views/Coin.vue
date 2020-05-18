@@ -26,20 +26,21 @@
           </div>
         </div>
       </v-col>
-      <v-col v-if="!isMarketDataLoading">
-        <div class="d-flex justify-space-between">
-          <div class="price">
-            {{ marketData.price | formatMarketValue }}
-          </div>
-          <div
-            class="d-flex justify-center flex-column"
-            v-for="(priceChange, index) in priceChanges"
-            :key="index"
-          >
-            <div class="text-center">{{ priceChange.title }}</div>
-            <div :class="percentColorClass(priceChange.value)">
-              {{ priceChange.value | formatPercent }}
-            </div>
+      <v-col
+        v-if="!isMarketDataLoading"
+        class="d-flex align-center justify-space-between"
+      >
+        <div class="price">
+          {{ marketData.price | formatMarketValue }}
+        </div>
+        <div
+          class="d-flex justify-center flex-column"
+          v-for="(priceChange, index) in priceChanges"
+          :key="index"
+        >
+          <div class="text-center">{{ priceChange.title }}</div>
+          <div :class="percentColorClass(priceChange.value)">
+            {{ priceChange.value | formatPercent }}
           </div>
         </div>
       </v-col>
@@ -86,7 +87,12 @@
     </v-row>
     <v-row>
       <v-col>
-        <div id="chart-container"></div>
+        <chart
+          :line-items="chartData.line"
+          line-label="Price"
+          :columns-items="chartData.columns"
+          columns-label="Volume"
+        />
       </v-col>
     </v-row>
     <v-row v-if="!isProfileLoading">
@@ -146,12 +152,16 @@
 </template>
 
 <script>
-import {stockChart} from 'highcharts/highstock';
 import {profile, marketData, historicalData} from '../api/coin';
 import {formatMarketValue, formatPercent, prettifyDate} from '../filters';
+import Chart from '../components/Chart';
 
 export default {
   name: 'Coin',
+
+  components: {
+    Chart,
+  },
 
   data() {
     return {
@@ -184,10 +194,6 @@ export default {
   watch: {
     period() {
       this.fetchCoinHistoricalData();
-    },
-
-    historicalData() {
-      this.drawChart();
     },
   },
 
@@ -227,121 +233,6 @@ export default {
       this.isHistoricalDataLoading = false;
     },
 
-    drawChart() {
-      stockChart('chart-container', {
-        chart: {
-          backgroundColor: 'transparent',
-        },
-
-        credits: {
-          enabled: false,
-        },
-
-        navigator: {
-          enabled: false,
-        },
-
-        scrollbar: {
-          enabled: false,
-        },
-
-        plotOptions: {
-          area: {
-            lineWidth: 3,
-          },
-        },
-
-        rangeSelector: {
-          enabled: false,
-        },
-
-        series: [
-          {
-            name: 'Price',
-            data: this.chartData.prices,
-            type: 'area',
-            index: 1,
-            tooltip: {
-              valueDecimals: 2,
-            },
-            color: {
-              linearGradient: {x1: 0, x2: 1, y1: 0, y2: 0},
-              stops: [
-                [0, '#f869d5'],
-                [1, '#5650de'],
-              ],
-            },
-            fillColor: {
-              linearGradient: {x1: 0, x2: 1, y1: 0, y2: 0},
-              stops: [
-                [0, 'rgba(248,105,213,0.1)'],
-                [1, 'rgba(86,80,222,0.1)'],
-              ],
-            },
-          },
-          {
-            name: 'Volume',
-            data: this.chartData.volumes,
-            type: 'column',
-            yAxis: 1,
-            index: 0,
-            color: '#313051',
-          },
-        ],
-
-        tooltip: {
-          backgroundColor: '#313051',
-          borderWidth: 0,
-          hideDelay: 50,
-          shared: true,
-          followPointer: true,
-          split: false,
-          style: {
-            color: '#dcdbf2',
-          },
-          valuePrefix: '$',
-        },
-
-        xAxis: {
-          crosshair: {
-            color: '#4e4e7c',
-          },
-          lineColor: 'transparent',
-          tickColor: 'transparent',
-          labels: {
-            style: {
-              color: '#dcdbf2',
-            },
-          },
-        },
-
-        yAxis: [
-          {
-            labels: {
-              format: '${value}',
-              style: {
-                color: '#dcdbf2',
-              },
-            },
-            gridLineWidth: 1,
-            gridLineColor: '#282941',
-            min: this.lowestPriceForPeriod,
-            max: this.highestPriceForPeriod,
-          },
-          {
-            labels: {
-              align: 'left',
-            },
-            height: '20%',
-            top: '80%',
-            offset: 0,
-            visible: false,
-            gridLineWidth: 0,
-          },
-        ],
-      });
-    },
-
     formatSupply(supply) {
       return (
         supply.toLocaleString('en-US') + ' ' + this.profile.symbol.toUpperCase()
@@ -355,34 +246,20 @@ export default {
 
   computed: {
     chartData() {
-      let data = {prices: [], volumes: []};
+      let data = {line: [], columns: []};
 
       for (let i = 0; i < this.historicalData.length - 1; i++) {
-        data.prices.push([
+        data.line.push([
           this.historicalData[i].timestamp,
           this.historicalData[i].price,
         ]);
-        data.volumes.push([
+        data.columns.push([
           this.historicalData[i].timestamp,
           this.historicalData[i].volume,
         ]);
       }
 
       return data;
-    },
-
-    lowestPriceForPeriod() {
-      return this.historicalData.reduce(
-        (min, item) => (item.price < min ? item.price : min),
-        this.historicalData[0].price,
-      );
-    },
-
-    highestPriceForPeriod() {
-      return this.historicalData.reduce(
-        (max, item) => (item.price > max ? item.price : max),
-        this.historicalData[0].price,
-      );
     },
 
     marketDataCards() {
@@ -468,9 +345,6 @@ export default {
 </script>
 
 <style scoped lang="scss">
-#chart-container {
-  width: 100%;
-}
 .muted {
   color: var(--v-text-darken2);
 }
