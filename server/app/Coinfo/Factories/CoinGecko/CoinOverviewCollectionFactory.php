@@ -22,7 +22,7 @@ final class CoinOverviewCollectionFactory
                     'priceChange24h' => $coin['price_change_percentage_24h'] ?? null,
                     'marketCap' => $coin['market_cap'],
                     'volume' => $coin['total_volume'],
-                    'sparkline' => $coin['sparkline_7d'] ? $coin['sparkline_7d']['price'] : null,
+                    'sparkline' => $coin['sparkline_in_7d'] ? $coin['sparkline_in_7d']['price'] : null,
                 ]);
             },
             $data

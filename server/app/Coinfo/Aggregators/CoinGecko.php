@@ -24,7 +24,7 @@ final class CoinGecko extends Aggregator
             'page' => $page,
             'per_page' => $perPage,
             'ids' => implode(",", $ids),
-            'sparkline' => $sparkline,
+            'sparkline' => $sparkline ? "true" : "false",
         ]);
 
         return CoinOverviewCollectionFactory::create($data);
