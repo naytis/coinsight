@@ -91,19 +91,14 @@ export default {
     return {
       sidebarLinks: [
         {
+          routeTo: {name: 'portfolio'},
+          icon: 'mdi-briefcase',
+          title: 'Portfolio',
+        },
+        {
           routeTo: {name: 'markets'},
           icon: 'mdi-finance',
           title: 'Markets',
-        },
-        {
-          routeTo: {name: 'home'},
-          icon: 'mdi-home-outline',
-          title: 'Home',
-        },
-        {
-          routeTo: {name: 'about'},
-          icon: 'mdi-information-outline',
-          title: 'About',
         },
       ],
     };

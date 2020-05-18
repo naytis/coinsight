@@ -5,7 +5,7 @@ const formatMarketValue = value => {
     return;
   }
 
-  return '$' + value.toLocaleString('en-US');
+  return value.toLocaleString('en-US', {style: 'currency', currency: 'USD'});
 };
 
 const prettifyDate = date => {
@@ -13,7 +13,17 @@ const prettifyDate = date => {
 };
 
 const formatPercent = percent => {
+  percent = percent.toFixed(2);
   return (percent > 0 ? '+' + percent : percent) + '%';
 };
 
-export {formatMarketValue, prettifyDate, formatPercent};
+const formatPercentWithoutSign = percent => {
+  return percent.toFixed(2) + '%';
+};
+
+export {
+  formatMarketValue,
+  prettifyDate,
+  formatPercent,
+  formatPercentWithoutSign,
+};

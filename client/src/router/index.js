@@ -1,34 +1,25 @@
 import Vue from 'vue';
 import VueRouter from 'vue-router';
-import Home from '../views/Home';
-import About from '../views/About';
 import Login from '../views/Login';
 import AuthGuard from '../components/AuthGuard';
 import Register from '../views/Register';
 import Markets from '../views/Markets';
 import Coin from '../views/Coin';
+import Portfolio from '../views/Portfolio';
 
 Vue.use(VueRouter);
 
 const routes = [
   {
     path: '/',
-    redirect: 'home',
+    redirect: 'portfolio',
   },
   {
-    path: '/home',
-    name: 'home',
-    component: Home,
+    path: '/portfolio',
+    name: 'portfolio',
+    component: Portfolio,
     meta: {
       requiresAuth: true,
-    },
-  },
-  {
-    path: '/about',
-    name: 'about',
-    component: About,
-    meta: {
-      requiresAuth: false,
     },
   },
   {

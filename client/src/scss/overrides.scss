@@ -5,7 +5,8 @@
 
 .theme--dark.v-app-bar.v-toolbar.v-sheet,
 .theme--dark.v-navigation-drawer,
-.theme--dark.v-list {
+.theme--dark.v-list,
+.theme--dark.v-tabs-items {
   background-color: var(--v-surface-base);
 }
 
@@ -33,7 +34,7 @@
   }
 }
 
-.v-text-field, .v-btn:not(.v-btn--round), .v-card {
+.v-text-field, .v-btn:not(.v-btn--round), .v-card, .v-dialog{
   border-radius: 1em;
 }
 

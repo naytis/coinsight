@@ -13,18 +13,62 @@
       ></v-progress-circular>
     </v-overlay>
     <v-row>
-      <v-col v-if="!isProfileLoading">
-        <div class="d-flex align-center">
-          <div>
-            <v-img :src="profile.icon" width="4em" height="4em" />
-          </div>
-          <div class="ml-3">
-            <div class="display-1">
-              {{ profile.name }} ({{ profile.symbol.toUpperCase() }})
+      <v-col>
+        <v-row>
+          <v-col class="py-0" v-if="!isProfileLoading">
+            <div class="d-flex align-center">
+              <div>
+                <v-img :src="profile.icon" width="4em" height="4em" />
+              </div>
+              <div class="ml-3">
+                <div class="display-1">
+                  {{ profile.name }} ({{ profile.symbol.toUpperCase() }})
+                </div>
+                <div class="muted">{{ profile.tagline }}</div>
+              </div>
             </div>
-            <div class="muted">{{ profile.tagline }}</div>
-          </div>
-        </div>
+          </v-col>
+          <v-col class="py-0" cols="4" align-self="center">
+            <v-dialog v-model="addTransactionDialog" width="700">
+              <template v-slot:activator="{on}">
+                <v-btn small block color="text" outlined v-on="on">
+                  Add transaction
+                </v-btn>
+              </template>
+              <v-card>
+                <v-card-text class="py-4">
+                  <v-tabs grow background-color="surface">
+                    <v-tab>Buy</v-tab>
+                    <v-tab>Sell</v-tab>
+                    <v-tab-item class="py-2">
+                      <v-form>
+                        <v-text-field
+                          label="Price per coin"
+                          :value="marketData.price"
+                          flat
+                          prefix="$"
+                        />
+                        <v-text-field label="Quantity" flat value="0" />
+                        <v-text-field label="Fee" prefix="$" flat value="0" />
+                        <v-text-field label="Date" flat />
+                      </v-form>
+                      <div class="d-flex justify-end">
+                        <v-btn
+                          class="mt-4"
+                          color="primary"
+                          outlined
+                          @click="addTransactionDialog = false"
+                        >
+                          Save transaction
+                        </v-btn>
+                      </div>
+                    </v-tab-item>
+                  </v-tabs>
+                </v-card-text>
+              </v-card>
+            </v-dialog>
+          </v-col>
+        </v-row>
       </v-col>
       <v-col
         v-if="!isMarketDataLoading"
@@ -168,6 +212,7 @@ export default {
       isProfileLoading: false,
       isMarketDataLoading: false,
       isHistoricalDataLoading: false,
+      addTransactionDialog: false,
       profile: {},
       marketData: {},
       historicalData: [],
