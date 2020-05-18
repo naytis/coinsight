@@ -30,7 +30,7 @@ final class PortfolioReportResource extends JsonResource implements Response
                 'share' => $asset->share,
             ]),
             'value_by_time' => $this->valueByTime->map(fn (ValueByTime $valueByTime) => [
-                'timestamp' => $valueByTime->datetime->timestamp,
+                'timestamp' => $valueByTime->datetime->getPreciseTimestamp(3),
                 'value' => $valueByTime->value,
             ]),
         ];
