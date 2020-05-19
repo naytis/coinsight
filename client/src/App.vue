@@ -100,6 +100,11 @@ export default {
           icon: 'mdi-finance',
           title: 'Markets',
         },
+        {
+          routeTo: {name: 'news'},
+          icon: 'mdi-newspaper-variant-multiple-outline',
+          title: 'News',
+        },
       ],
     };
   },

@@ -6,6 +6,8 @@ import Register from '../views/Register';
 import Markets from '../views/Markets';
 import Coin from '../views/Coin';
 import Portfolio from '../views/Portfolio';
+import News from '../views/News';
+import NewsArticle from '../views/NewsArticle';
 
 Vue.use(VueRouter);
 
@@ -29,6 +31,16 @@ const routes = [
     meta: {
       requiresAuth: true,
     },
+  },
+  {
+    path: '/news',
+    name: 'news',
+    component: News,
+  },
+  {
+    path: '/news/:id',
+    name: 'news-article',
+    component: NewsArticle,
   },
   {
     path: '/coins/:id',
