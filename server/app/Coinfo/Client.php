@@ -108,6 +108,11 @@ final class Client
         );
     }
 
+    public function news(int $page = 1): NewsArticleCollection
+    {
+        return $this->messari->news($page);
+    }
+
     private function getCoinpaprikaCoinId(string $currencyName, string $currencySymbol): string
     {
         return Str::slug($currencySymbol . " " . $currencyName);
