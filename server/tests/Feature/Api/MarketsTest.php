@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Feature\Api;
 
+use App\Domain\Markets\Models\News;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\DB;
@@ -172,5 +173,33 @@ final class MarketsTest extends ApiTestCase
             ],
             'meta' => []
         ]);
+    }
+
+    public function test_get_news()
+    {
+        factory(News::class, 10)->create();
+
+        $this->apiGet("news")
+            ->dump()
+            ->assertStatus(Response::HTTP_OK)
+            ->assertJsonStructure([
+                'data' => [
+                    'news' => [
+                        '*' => [
+                            'id',
+                            'title',
+                            'content',
+                            'published_at',
+                            'author',
+                        ],
+                    ],
+                ],
+                'meta' => [
+                    'total',
+                    'page',
+                    'per_page',
+                    'last_page',
+                ],
+            ]);
     }
 }

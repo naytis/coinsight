@@ -9,4 +9,8 @@ use Illuminate\Database\Eloquent\Model;
 final class News extends Model
 {
     protected $table = 'news';
+
+    protected $dates = [
+        'published_at',
+    ];
 }

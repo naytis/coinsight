@@ -40,6 +40,12 @@ Route::namespace('Markets\Controllers')->group(function () {
         Route::get('/{id}/latest', 'CoinController@getCoinMarketData');
         Route::get('/{id}/historical', 'CoinController@getCoinHistoricalData');
     });
+
+    Route::group([
+        'prefix' => 'news',
+    ], function () {
+       Route::get('/', 'NewsController@getNews');
+    });
 });
 
 Route::namespace('Portfolios\Controllers')->group(function () {
