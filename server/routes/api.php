@@ -45,6 +45,7 @@ Route::namespace('Markets\Controllers')->group(function () {
         'prefix' => 'news',
     ], function () {
        Route::get('/', 'NewsController@getNews');
+       Route::get('/{id}', 'NewsController@getNewsArticleById');
     });
 });
 

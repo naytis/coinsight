@@ -180,7 +180,6 @@ final class MarketsTest extends ApiTestCase
         factory(News::class, 10)->create();
 
         $this->apiGet("news")
-            ->dump()
             ->assertStatus(Response::HTTP_OK)
             ->assertJsonStructure([
                 'data' => [
@@ -199,6 +198,23 @@ final class MarketsTest extends ApiTestCase
                     'page',
                     'per_page',
                     'last_page',
+                ],
+            ]);
+    }
+
+    public function test_get_news_article()
+    {
+        $id = factory(News::class)->create()->id;
+
+        $this->apiGet("news/{$id}")
+            ->assertStatus(Response::HTTP_OK)
+            ->assertJsonStructure([
+                'data' => [
+                    'id',
+                    'title',
+                    'content',
+                    'published_at',
+                    'author',
                 ],
             ]);
     }

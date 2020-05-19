@@ -13,15 +13,8 @@ final class NewsCollectionResource extends JsonResource implements Response
     public function toArray($request): array
     {
         $news = $this->map(
-            fn (NewsArticle $newsArticle) => [
-                'id' => $newsArticle->id,
-                'title' => $newsArticle->title,
-                'content' => $newsArticle->content,
-                'published_at' => $newsArticle->publishedAt->timestamp,
-                'author' => $newsArticle->author,
-            ],
+            fn (NewsArticle $newsArticle) => new NewsArticleResource($newsArticle),
         );
-
 
         return [
             'news' => $news,
