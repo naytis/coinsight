@@ -9,8 +9,6 @@ use App\Http\Common\Requests\AuthContextTrait;
 
 final class GetCoinsApiRequest extends ApiRequest
 {
-    use AuthContextTrait;
-
     public function rules(): array
     {
         return [

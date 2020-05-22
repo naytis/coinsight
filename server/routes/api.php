@@ -28,12 +28,10 @@ Route::namespace('Users\Controllers')->group(function () {
 });
 
 Route::namespace('Markets\Controllers')->group(function () {
-    Route::middleware('token:access')
-        ->get('/global', 'GlobalStatsController@getGlobalStats');
+    Route::get('/global', 'GlobalStatsController@getGlobalStats');
 
     Route::group([
         'prefix' => 'coins',
-        'middleware' => 'token:access'
     ], function () {
         Route::get('/', 'CoinController@getCoins');
         Route::get('/{id}/profile', 'CoinController@getCoinProfile');
