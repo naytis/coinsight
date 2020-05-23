@@ -13,9 +13,7 @@ final class GlobalStatsResource extends JsonResource implements Response
     {
         return [
             'market_cap' => $this->marketCap,
-            'market_cap_change' => $this->marketCapChange,
             'volume' => $this->volume,
-            'volume_change' => $this->volumeChange,
             'bitcoin_dominance' => $this->bitcoinDominance,
         ];
     }

@@ -34,13 +34,6 @@ trait CoinfoDataProvider
     private function methodMapper(): array
     {
         return [
-            'globalStats' => [
-                'url' => $this->getEndpointUrl(
-                    Coinpaprika::BASE_URL,
-                    'global',
-                ),
-                'response' => $this->fakeGlobalStatsResponse(),
-            ],
             'markets' => [
                 'url' => $this->getEndpointUrlWithWildcard(
                     CoinGecko::BASE_URL,
@@ -86,55 +79,6 @@ trait CoinfoDataProvider
             '*' => [
                 'url' => '*',
                 'response' => ['fallback'],
-            ]
-        ];
-    }
-
-    public function fakeGlobalStatsResponse(): array
-    {
-        return [
-            'market_cap_usd' => 123,
-            'volume_24h_usd' => 123,
-            'bitcoin_dominance_percentage' => 12.345,
-            'market_cap_change_24h' => -1.23,
-            'volume_24h_change_24h' => -1.23,
-        ];
-    }
-
-    public function fakeCoinStatsMarketsResponse(): array
-    {
-        return [
-            'coins' => [
-                [
-                    'icon' => 'icon1',
-                    'name' => 'name1',
-                    'symbol' => 'symbol1',
-                    'rank' => 1,
-                    'price' => 1234.567,
-                    'volume' => 1234.567,
-                    'marketCap' => 1234.567,
-                    'priceChange1d' => -12.34,
-                ],
-                [
-                    'icon' => 'icon2',
-                    'name' => 'name2',
-                    'symbol' => 'symbol2',
-                    'rank' => 2,
-                    'price' => 123.45,
-                    'volume' => 123.45,
-                    'marketCap' => 123.45,
-                    'priceChange1d' => -12.34,
-                ],
-                [
-                    'icon' => 'icon3',
-                    'name' => 'name3',
-                    'symbol' => 'symbol3',
-                    'rank' => 3,
-                    'price' => 123.45,
-                    'volume' => 123.45,
-                    'marketCap' => 123.45,
-                    'priceChange1d' => -12.34,
-                ],
             ]
         ];
     }

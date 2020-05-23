@@ -22,19 +22,6 @@ final class CoinfoTest extends TestCase
         $this->fakeCoinfo();
     }
 
-    public function test_global_stats()
-    {
-        $expectedResponse = $this->fakeGlobalStatsResponse();
-
-        $globalStats = $this->client->globalStats();
-
-        $this->assertEquals($expectedResponse['market_cap_usd'], $globalStats->marketCap);
-        $this->assertEquals($expectedResponse['market_cap_change_24h'], $globalStats->marketCapChange);
-        $this->assertEquals($expectedResponse['volume_24h_usd'], $globalStats->volume);
-        $this->assertEquals($expectedResponse['volume_24h_change_24h'], $globalStats->volumeChange);
-        $this->assertEquals($expectedResponse['bitcoin_dominance_percentage'], $globalStats->bitcoinDominance);
-    }
-
     public function test_markets()
     {
         $expectedResponse = $this->fakeCoinGeckoMarketsResponse();

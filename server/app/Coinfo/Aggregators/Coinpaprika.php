@@ -6,22 +6,14 @@ namespace App\Coinfo\Aggregators;
 
 use App\Coinfo\Enums\Interval;
 use App\Coinfo\Factories\Coinpaprika\CoinMarketDataFactory;
-use App\Coinfo\Factories\Coinpaprika\GlobalStatsFactory;
 use App\Coinfo\Factories\Coinpaprika\CoinHistoricalDataCollectionFactory;
 use App\Coinfo\Types\CoinMarketData;
-use App\Coinfo\Types\GlobalStats;
 use App\Coinfo\Types\CoinHistoricalDataCollection;
 use Carbon\Carbon;
 
 final class Coinpaprika extends Aggregator
 {
     public const BASE_URL = 'https://api.coinpaprika.com/v1/';
-
-    public function globalStats(): GlobalStats
-    {
-        $data = $this->request("global");
-        return GlobalStatsFactory::create($data);
-    }
 
     public function tickerByCoinId(string $id): CoinMarketData
     {

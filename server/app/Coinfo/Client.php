@@ -13,7 +13,6 @@ use App\Coinfo\Types\CoinOverviewCollection;
 use App\Coinfo\Types\CoinProfile;
 use App\Coinfo\Types\CoinMarketData;
 use App\Coinfo\Types\CoinOHLCVCollection;
-use App\Coinfo\Types\GlobalStats;
 use App\Coinfo\Types\CoinHistoricalDataCollection;
 use Carbon\Carbon;
 use Illuminate\Support\Str;
@@ -35,11 +34,6 @@ final class Client
         $this->coinGecko = $coinGecko;
         $this->coinStats = $coinStats;
         $this->messari = $messari;
-    }
-
-    public function globalStats(): GlobalStats
-    {
-        return $this->coinpaprika->globalStats();
     }
 
     public function markets(int $page = 1, int $perPage = 100): CoinOverviewCollection
