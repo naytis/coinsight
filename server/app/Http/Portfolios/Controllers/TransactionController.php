@@ -51,6 +51,10 @@ final class TransactionController
             ->execute(new GetTransactionsRequest([
                 'userId' => $request->userId(),
                 'portfolioId' => $request->portfolioId(),
+                'page' => $request->page(),
+                'perPage' => $request->perPage(),
+                'sort' => $request->sort(),
+                'direction' => $request->direction(),
             ]))
             ->transactions;
 

@@ -6,15 +6,25 @@ namespace App\Domain\Portfolios\Services;
 
 use App\Domain\Portfolios\Exceptions\TransactionNotFound;
 use App\Domain\Portfolios\Models\Transaction;
+use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 
 final class TransactionService
 {
-    public function getCollectionByPortfolioId(int $portfolioId, array $withRelations = []): Collection
-    {
-        return Transaction::with($withRelations)->wherePortfolioId($portfolioId)->get();
+    public function paginateByPortfolioId(
+        int $portfolioId,
+        int $page,
+        int $perPage,
+        string $sort,
+        string $direction,
+        array $withRelations = []
+    ): LengthAwarePaginator {
+        return Transaction::with($withRelations)
+            ->orderBy($sort, $direction)
+            ->wherePortfolioId($portfolioId)
+            ->paginate($perPage, ['*'], null, $page);
     }
 
     public function getByIdAndUserId(int $transactionId, int $userId, array $withRelations = []): Transaction

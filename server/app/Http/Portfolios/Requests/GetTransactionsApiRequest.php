@@ -15,11 +15,35 @@ final class GetTransactionsApiRequest extends ApiRequest
     {
         return [
             'portfolio_id' => 'required|integer|min:1',
+            'page' => 'integer|min:1',
+            'per_page' => 'integer|min:1|max:50',
+            'sort' => 'string',
+            'direction' => 'string|in:asc,desc',
         ];
     }
 
     public function portfolioId(): int
     {
         return (int) $this->get('portfolio_id');
+    }
+
+    public function page(): ?int
+    {
+        return (int) $this->get('page');
+    }
+
+    public function perPage(): ?int
+    {
+        return (int) $this->get('per_page');
+    }
+
+    public function sort(): ?string
+    {
+        return $this->get('sort');
+    }
+
+    public function direction(): ?string
+    {
+        return $this->get('direction');
     }
 }

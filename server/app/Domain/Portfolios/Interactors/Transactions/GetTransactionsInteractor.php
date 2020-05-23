@@ -33,7 +33,14 @@ final class GetTransactionsInteractor
     public function execute(GetTransactionsRequest $request): GetTransactionsResponse
     {
         $portfolio = $this->portfolioService->getByIdAndUserId($request->portfolioId, $request->userId);
-        $transactionCollection = $this->transactionService->getCollectionByPortfolioId($portfolio->id, ['coin']);
+        $transactionCollection = $this->transactionService->paginateByPortfolioId(
+            $portfolio->id,
+            $request->page,
+            $request->perPage,
+            $request->sort,
+            $request->direction,
+            ['coin']
+        );
 
         $coinsNames = $transactionCollection
             ->map(fn (Transaction $transaction) => $transaction->coin->name)
