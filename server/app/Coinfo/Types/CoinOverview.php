@@ -16,5 +16,6 @@ final class CoinOverview extends DataTransferObject
     public ?float $priceChange24h;
     public float $marketCap;
     public float $volume;
+    public float $circulatingSupply;
     public ?array $sparkline;
 }
