@@ -13,4 +13,5 @@ final class GetCoinsResponse extends DataTransferObject
     public int $total;
     public int $page;
     public int $perPage;
+    public int $lastPage;
 }

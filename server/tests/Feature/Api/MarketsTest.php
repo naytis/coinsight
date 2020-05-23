@@ -38,51 +38,43 @@ final class MarketsTest extends ApiTestCase
 
     public function test_coins()
     {
-        DB::table('coins')->insert([
-            [
-                'name' => 'name1',
-                'symbol' => 'symbol1',
-                'icon' => 'icon1',
-            ],
-            [
-                'name' => 'name2',
-                'symbol' => 'symbol2',
-                'icon' => 'icon2',
-            ],
-            [
-                'name' => 'name3',
-                'symbol' => 'symbol3',
-                'icon' => 'icon3',
-            ],
+        $coinId = DB::table('coins')->insertGetId([
+            'name' => 'name1',
+            'symbol' => 'symbol1',
+            'icon' => 'icon1',
+        ]);
+        factory(CoinMarketData::class)->create([
+            'coin_id' => $coinId,
         ]);
 
-        $response = $this->apiGet('/coins', [
-            'page' => 1,
-            'per_page' => 5
-        ]);
-
-        $response->assertStatus(Response::HTTP_OK)->assertJsonStructure([
-            'data' => [
-                'coins' => [
-                    '*' => [
-                        'id',
-                        'name',
-                        'symbol',
-                        'icon',
-                        'rank',
-                        'price',
-                        'price_change_24h',
-                        'market_cap',
-                        'volume',
+        $this
+            ->apiGet('/coins', [
+                'page' => 1,
+                'per_page' => 5
+            ])
+            ->assertStatus(Response::HTTP_OK)
+            ->assertJsonStructure([
+                'data' => [
+                    'coins' => [
+                        '*' => [
+                            'id',
+                            'name',
+                            'symbol',
+                            'icon',
+                            'rank',
+                            'price',
+                            'price_change_24h',
+                            'market_cap',
+                            'volume',
+                        ]
                     ]
+                ],
+                'meta' => [
+                    'total',
+                    'page',
+                    'per_page',
                 ]
-            ],
-            'meta' => [
-                'total',
-                'page',
-                'per_page',
-            ]
-        ]);
+            ]);
     }
 
     public function test_profile()

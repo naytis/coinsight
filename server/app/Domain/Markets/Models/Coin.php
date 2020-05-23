@@ -19,4 +19,9 @@ final class Coin extends Model
     {
         return $this->hasMany(CoinLink::class);
     }
+
+    public function marketData(): HasOne
+    {
+        return $this->hasOne(CoinMarketData::class);
+    }
 }

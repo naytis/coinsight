@@ -42,6 +42,7 @@ final class CoinController
                 'total' => $coinsResponse->total,
                 'page' => $coinsResponse->page,
                 'per_page' => $coinsResponse->perPage,
+                'last_page' => $coinsResponse->lastPage,
             ]
         );
     }

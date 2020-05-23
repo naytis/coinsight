@@ -13,12 +13,12 @@ final class CoinOverviewCollectionResource extends JsonResource implements Respo
     public function toArray($request): array
     {
         $coins = $this->map(
-            fn (CoinOverview $overview) => [
+            fn (CoinOverview $overview, int $index) => [
                 'id' => $overview->coin->id,
                 'name' => $overview->coin->name,
                 'symbol' => $overview->coin->symbol,
                 'icon' => url($overview->coin->icon),
-                'rank' => $overview->rank,
+                'rank' => $index + 1,
                 'price' => $overview->price,
                 'price_change_24h' => $overview->priceChange24h,
                 'market_cap' => $overview->marketCap,

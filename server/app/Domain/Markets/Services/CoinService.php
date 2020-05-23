@@ -6,7 +6,7 @@ namespace App\Domain\Markets\Services;
 
 use App\Domain\Markets\Exceptions\CoinNotFound;
 use App\Domain\Markets\Models\Coin;
-use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 
 final class CoinService
@@ -20,8 +20,12 @@ final class CoinService
         }
     }
 
-    public function getCollectionByNames(array $names): Collection
+    public function paginate(int $page, int $perPage): LengthAwarePaginator
     {
-        return Coin::whereIn('name', $names)->get();
+        return Coin::with(['marketData' => fn ($query) =>
+            $query->orderBy('market_cap', 'desc')
+        ])
+            ->has('marketData')
+            ->paginate($perPage, ['*'], null, $page);
     }
 }
