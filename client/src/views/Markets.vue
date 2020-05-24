@@ -103,9 +103,12 @@
 
 <script>
 import {globalStats, coins} from '../api/markets';
+import percentColorClass from '../mixins/percentColorClass';
 
 export default {
   name: 'Markets',
+
+  mixins: [percentColorClass],
 
   async created() {
     this.fetchGlobalStats();
@@ -160,10 +163,6 @@ export default {
         alert(e);
       }
       this.isCoinsLoading = false;
-    },
-
-    percentColorClass(percent) {
-      return (percent > 0 ? 'green' : 'red') + '--text text--lighten-1';
     },
   },
 

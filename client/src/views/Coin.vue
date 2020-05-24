@@ -199,6 +199,7 @@
 import {profile, marketData, historicalData} from '../api/coin';
 import {formatMarketValue} from '../filters';
 import Chart from '../components/Chart';
+import percentColorClass from '../mixins/percentColorClass';
 
 export default {
   name: 'Coin',
@@ -206,6 +207,8 @@ export default {
   components: {
     Chart,
   },
+
+  mixins: [percentColorClass],
 
   data() {
     return {
@@ -282,10 +285,6 @@ export default {
       return (
         supply.toLocaleString('en-US') + ' ' + this.profile.symbol.toUpperCase()
       );
-    },
-
-    percentColorClass(percent) {
-      return (percent > 0 ? 'green' : 'red') + '--text text--lighten-1';
     },
   },
 
