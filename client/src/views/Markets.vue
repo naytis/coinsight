@@ -1,37 +1,18 @@
 <template>
   <v-col>
     <v-row justify="space-around">
-      <v-col cols="3" class="text-center">
-        <div class="subtitle-1">Market Cap</div>
-        <div class="title" v-if="!isGlobalStatsLoading">
-          <div v-if="'marketCap' in globalStats">
-            {{ globalStats.marketCap | formatMarketValue }}
-          </div>
-          <div v-else>No data available</div>
-        </div>
-        <v-skeleton-loader class="mt-1" v-else type="heading" />
-      </v-col>
-
-      <v-col cols="3" class="text-center">
-        <div class="subtitle-1">Volume</div>
-        <div class="title" v-if="!isGlobalStatsLoading">
-          <div v-if="'volume' in globalStats">
-            {{ globalStats.volume | formatMarketValue }}
-          </div>
-          <div v-else>No data available</div>
-        </div>
-        <v-skeleton-loader class="mt-1" v-else type="heading" />
-      </v-col>
-
-      <v-col cols="3" class="text-center">
-        <div class="subtitle-1">Bitcoin dominance</div>
-        <div class="title" v-if="!isGlobalStatsLoading">
-          <span v-if="'bitcoinDominance' in globalStats">
-            {{ globalStats.bitcoinDominance | formatPercentWithoutSign }}
-          </span>
-          <span v-else>No data available</span>
-        </div>
-        <v-skeleton-loader class="mt-1" v-else type="heading" />
+      <v-col
+        cols="3"
+        class="text-center"
+        v-for="(globalStatsItem, index) in globalStatsCards"
+        :key="index"
+      >
+        <card
+          :title="globalStatsItem.title"
+          :value="globalStatsItem.value"
+          :filter="globalStatsItem.filter"
+          :is-data-loading="isGlobalStatsLoading"
+        />
       </v-col>
     </v-row>
     <v-row justify="center">
@@ -103,10 +84,15 @@
 
 <script>
 import {globalStats, coins} from '../api/markets';
+import Card from '../components/Card';
 import percentColorClass from '../mixins/percentColorClass';
 
 export default {
   name: 'Markets',
+
+  components: {
+    Card,
+  },
 
   mixins: [percentColorClass],
 
@@ -123,7 +109,7 @@ export default {
       perPage: 100,
       headers: [
         {text: '#', value: 'rank', width: '2%'},
-        {text: 'Coin', value: 'coin', width: '25%'},
+        {text: 'Coin', value: 'coin', width: '20%'},
         {text: 'Price', value: 'price'},
         {text: 'Change (24h)', value: 'priceChange24H'},
         {text: 'Market Cap', value: 'marketCap'},
@@ -169,6 +155,25 @@ export default {
   computed: {
     coinsPageCount() {
       return Math.ceil(this.coinsTotal / this.perPage);
+    },
+    globalStatsCards() {
+      return [
+        {
+          title: 'Market Cap',
+          value: this.globalStats.marketCap,
+          filter: 'formatMarketValue',
+        },
+        {
+          title: 'Volume',
+          value: this.globalStats.volume,
+          filter: 'formatMarketValue',
+        },
+        {
+          title: 'Bitcoin dominance',
+          value: this.globalStats.bitcoinDominance,
+          filter: 'formatPercentWithoutSign',
+        },
+      ];
     },
   },
 };

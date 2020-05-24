@@ -38,11 +38,4 @@ const addFilters = Vue => {
   Vue.filter('formatPercentWithoutSign', formatPercentWithoutSign);
 };
 
-export {
-  formatMarketValue,
-  dateFromNow,
-  prettifyDate,
-  formatPercent,
-  formatPercentWithoutSign,
-  addFilters,
-};
+export {addFilters};

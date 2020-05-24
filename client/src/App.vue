@@ -68,7 +68,9 @@
     </v-navigation-drawer>
 
     <v-content>
-      <router-view />
+      <div class="wrapper">
+        <router-view />
+      </div>
     </v-content>
   </v-app>
 </template>
@@ -184,5 +186,9 @@ export default {
     padding: 0 0.25em;
     height: 76px;
   }
+}
+.wrapper {
+  width: 95%;
+  margin: 0 auto;
 }
 </style>

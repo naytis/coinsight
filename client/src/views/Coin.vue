@@ -96,24 +96,13 @@
         v-for="(marketDataItem, index) in marketDataCards"
         :key="index"
       >
-        <v-card elevation="0">
-          <v-card-text class="subtitle-1">
-            <div>{{ marketDataItem.title }}</div>
-            <div v-if="!isMarketDataLoading">
-              <div v-if="marketDataItem.value">
-                {{ marketDataItem.value }}
-                <span
-                  v-if="marketDataItem.percentChange"
-                  :class="percentColorClass(marketDataItem.percentChange)"
-                >
-                  {{ marketDataItem.percentChange | formatPercent }}
-                </span>
-              </div>
-              <div v-else>No data available</div>
-            </div>
-            <v-skeleton-loader class="mt-1" v-else type="heading" />
-          </v-card-text>
-        </v-card>
+        <card
+          :title="marketDataItem.title"
+          :is-data-loading="isMarketDataLoading"
+          :value="marketDataItem.value"
+          :filter="marketDataItem.filter"
+          :percent="marketDataItem.percentChange"
+        />
       </v-col>
     </v-row>
     <v-row justify="end" class="mt-4 px-3">
@@ -197,7 +186,7 @@
 
 <script>
 import {profile, marketData, historicalData} from '../api/coin';
-import {formatMarketValue} from '../filters';
+import Card from '../components/Card';
 import Chart from '../components/Chart';
 import percentColorClass from '../mixins/percentColorClass';
 
@@ -205,6 +194,7 @@ export default {
   name: 'Coin',
 
   components: {
+    Card,
     Chart,
   },
 
@@ -310,12 +300,14 @@ export default {
       return [
         {
           title: 'Market Cap',
-          value: formatMarketValue(this.marketData.marketCap),
+          value: this.marketData.marketCap,
+          filter: 'formatMarketValue',
           percentChange: this.marketData.marketCapChange24H,
         },
         {
           title: 'Volume (24h)',
-          value: formatMarketValue(this.marketData.volume),
+          value: this.marketData.volume,
+          filter: 'formatMarketValue',
           percentChange: this.marketData.volumeChange24H,
         },
         {
