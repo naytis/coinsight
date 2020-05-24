@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace App\Domain\Portfolios\Interactors\Portfolios;
 
-use App\Domain\Portfolios\Entities\Report;
 use Spatie\DataTransferObject\DataTransferObject;
 
-final class GetPortfolioReportByIdResponse extends DataTransferObject
+final class GetPortfolioOverviewByIdRequest extends DataTransferObject
 {
-    public Report $report;
+    public int $userId;
+    public int $portfolioId;
 }

@@ -6,7 +6,7 @@ namespace App\Domain\Portfolios\Interactors\Portfolios;
 
 use Spatie\DataTransferObject\DataTransferObject;
 
-final class GetPortfolioReportByIdRequest extends DataTransferObject
+final class GetPortfolioChartByIdRequest extends DataTransferObject
 {
     public int $userId;
     public int $portfolioId;

@@ -7,7 +7,7 @@ namespace App\Http\Portfolios\Requests;
 use App\Http\Common\Requests\ApiRequest;
 use App\Http\Common\Requests\AuthContextTrait;
 
-final class GetPortfolioReportByIdApiRequest extends ApiRequest
+final class GetPortfolioByIdApiRequest extends ApiRequest
 {
     use AuthContextTrait;
 

@@ -95,7 +95,8 @@ trait CoinfoDataProvider
                 'total_volume' => 1234.567,
                 'market_cap' => 1234.567,
                 'price_change_percentage_24h' => -12.34,
-                'sparkline_7d' => [
+                'circulating_supply' => 1,
+                'sparkline_in_7d' => [
                     'price' => [
                         1,
                     ],
@@ -110,7 +111,8 @@ trait CoinfoDataProvider
                 'total_volume' => 123.45,
                 'market_cap' => 123.45,
                 'price_change_percentage_24h' => -12.34,
-                'sparkline_7d' => [
+                'circulating_supply' => 1,
+                'sparkline_in_7d' => [
                     'price' => [
                         1,
                     ],
@@ -125,7 +127,8 @@ trait CoinfoDataProvider
                 'total_volume' => 123.45,
                 'market_cap' => 123.45,
                 'price_change_percentage_24h' => -12.34,
-                'sparkline_7d' => [
+                'circulating_supply' => 1,
+                'sparkline_in_7d' => [
                     'price' => [
                         1,
                     ],
@@ -306,6 +309,13 @@ trait CoinfoDataProvider
                     12345.12345
                 ],
             ]
+        ];
+    }
+
+    public function fakeNewsResponse(): array
+    {
+        return [
+
         ];
     }
 }

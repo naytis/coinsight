@@ -8,8 +8,12 @@ use App\Domain\Portfolios\Interactors\Portfolios\CreatePortfolioInteractor;
 use App\Domain\Portfolios\Interactors\Portfolios\CreatePortfolioRequest;
 use App\Domain\Portfolios\Interactors\Portfolios\DeletePortfolioByIdInteractor;
 use App\Domain\Portfolios\Interactors\Portfolios\DeletePortfolioByIdRequest;
-use App\Domain\Portfolios\Interactors\Portfolios\GetPortfolioReportByIdInteractor;
-use App\Domain\Portfolios\Interactors\Portfolios\GetPortfolioReportByIdRequest;
+use App\Domain\Portfolios\Interactors\Portfolios\GetPortfolioAssetsByIdInteractor;
+use App\Domain\Portfolios\Interactors\Portfolios\GetPortfolioAssetsByIdRequest;
+use App\Domain\Portfolios\Interactors\Portfolios\GetPortfolioOverviewByIdInteractor;
+use App\Domain\Portfolios\Interactors\Portfolios\GetPortfolioOverviewByIdRequest;
+use App\Domain\Portfolios\Interactors\Portfolios\GetPortfolioChartByIdInteractor;
+use App\Domain\Portfolios\Interactors\Portfolios\GetPortfolioChartByIdRequest;
 use App\Domain\Portfolios\Interactors\Portfolios\GetPortfoliosInteractor;
 use App\Domain\Portfolios\Interactors\Portfolios\GetPortfoliosRequest;
 use App\Domain\Portfolios\Interactors\Portfolios\UpdatePortfolioByIdInteractor;
@@ -17,11 +21,14 @@ use App\Domain\Portfolios\Interactors\Portfolios\UpdatePortfolioByIdRequest;
 use App\Http\Common\Resources\IdResource;
 use App\Http\Portfolios\Requests\CreatePortfolioApiRequest;
 use App\Http\Portfolios\Requests\DeletePortfolioByIdApiRequest;
-use App\Http\Portfolios\Requests\GetPortfolioReportByIdApiRequest;
+use App\Http\Portfolios\Requests\GetPortfolioAssetsByIdApiRequest;
+use App\Http\Portfolios\Requests\GetPortfolioByIdApiRequest;
 use App\Http\Portfolios\Requests\GetPortfoliosApiRequest;
 use App\Http\Portfolios\Requests\UpdatePortfolioByIdApiRequest;
+use App\Http\Portfolios\Resources\PortfolioAssetsResource;
+use App\Http\Portfolios\Resources\PortfolioChartResource;
 use App\Http\Portfolios\Resources\PortfolioCollectionResource;
-use App\Http\Portfolios\Resources\PortfolioReportResource;
+use App\Http\Portfolios\Resources\PortfolioOverviewResource;
 use App\Http\Portfolios\Resources\PortfolioResource;
 use App\Http\Common\ApiResponse;
 
@@ -66,18 +73,56 @@ final class PortfolioController
         );
     }
 
-    public function getPortfolioReportById(
-        GetPortfolioReportByIdApiRequest $request,
-        GetPortfolioReportByIdInteractor $portfolioReportByIdInteractor
+    public function getPortfolioOverviewById(
+        GetPortfolioByIdApiRequest $request,
+        GetPortfolioOverviewByIdInteractor $portfolioByIdInteractor
     ): ApiResponse {
-        $report = $portfolioReportByIdInteractor
-            ->execute(new GetPortfolioReportByIdRequest([
+        $portfolioOverview = $portfolioByIdInteractor
+            ->execute(new GetPortfolioOverviewByIdRequest([
                 'userId' => $request->userId(),
                 'portfolioId' => $request->id(),
             ]))
-            ->report;
+            ->overview;
 
-        return ApiResponse::success(new PortfolioReportResource($report));
+        return ApiResponse::success(new PortfolioOverviewResource($portfolioOverview));
+    }
+
+    public function getPortfolioChartById(
+        GetPortfolioByIdApiRequest $request,
+        GetPortfolioChartByIdInteractor $portfolioChartByIdInteractor
+    ): ApiResponse {
+        $portfolioChart = $portfolioChartByIdInteractor
+            ->execute(new GetPortfolioChartByIdRequest([
+                'userId' => $request->userId(),
+                'portfolioId' => $request->id(),
+            ]))
+            ->portfolioValueByTime;
+
+        return ApiResponse::success(new PortfolioChartResource($portfolioChart));
+    }
+
+    public function getPortfolioAssetsById(
+        GetPortfolioAssetsByIdApiRequest $request,
+        GetPortfolioAssetsByIdInteractor $portfolioAssetsByIdInteractor
+    ): ApiResponse {
+        $portfolioAssetsResponse = $portfolioAssetsByIdInteractor->execute(
+            new GetPortfolioAssetsByIdRequest([
+                'userId' => $request->userId(),
+                'portfolioId' => $request->id(),
+                'page' => $request->page(),
+                'perPage' => $request->perPage(),
+            ])
+        );
+
+        return ApiResponse::success(
+            new PortfolioAssetsResource($portfolioAssetsResponse->assets),
+            [
+                'total' => $portfolioAssetsResponse->total,
+                'page' => $portfolioAssetsResponse->page,
+                'per_page' => $portfolioAssetsResponse->perPage,
+                'last_page' => $portfolioAssetsResponse->lastPage,
+            ]
+        );
     }
 
     public function updatePortfolioById(

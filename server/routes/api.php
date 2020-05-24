@@ -54,7 +54,9 @@ Route::namespace('Portfolios\Controllers')->group(function () {
     ], function () {
         Route::post('/', 'PortfolioController@createPortfolio');
         Route::get('/', 'PortfolioController@getPortfolios');
-        Route::get('/{id}', 'PortfolioController@getPortfolioReportById');
+        Route::get('/{id}', 'PortfolioController@getPortfolioOverviewById');
+        Route::get('/{id}/chart', 'PortfolioController@getPortfolioChartById');
+        Route::get('/{id}/assets', 'PortfolioController@getPortfolioAssetsById');
         Route::put('/{id}', 'PortfolioController@updatePortfolioById');
         Route::delete('/{id}', 'PortfolioController@deletePortfolioById');
     });
