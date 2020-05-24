@@ -6,12 +6,6 @@
         <div class="title" v-if="!isGlobalStatsLoading">
           <div v-if="'marketCap' in globalStats">
             {{ globalStats.marketCap | formatMarketValue }}
-            <span
-              class="subtitle-1"
-              :class="percentColorClass(globalStats.marketCapChange)"
-            >
-              {{ globalStats.marketCapChange | formatPercent }}
-            </span>
           </div>
           <div v-else>No data available</div>
         </div>
@@ -23,12 +17,6 @@
         <div class="title" v-if="!isGlobalStatsLoading">
           <div v-if="'volume' in globalStats">
             {{ globalStats.volume | formatMarketValue }}
-            <span
-              class="subtitle-1"
-              :class="percentColorClass(globalStats.volumeChange)"
-            >
-              {{ globalStats.volumeChange | formatPercent }}
-            </span>
           </div>
           <div v-else>No data available</div>
         </div>
@@ -39,7 +27,7 @@
         <div class="subtitle-1">Bitcoin dominance</div>
         <div class="title" v-if="!isGlobalStatsLoading">
           <span v-if="'bitcoinDominance' in globalStats">
-            {{ globalStats.bitcoinDominance }}%
+            {{ globalStats.bitcoinDominance | formatPercentWithoutSign }}
           </span>
           <span v-else>No data available</span>
         </div>
@@ -115,7 +103,6 @@
 
 <script>
 import {globalStats, coins} from '../api/markets';
-import {formatMarketValue, formatPercent} from '../filters';
 
 export default {
   name: 'Markets',
@@ -183,16 +170,6 @@ export default {
   computed: {
     coinsPageCount() {
       return Math.ceil(this.coinsTotal / this.perPage);
-    },
-  },
-
-  filters: {
-    formatPercent(percent) {
-      return formatPercent(percent);
-    },
-
-    formatMarketValue(value) {
-      return formatMarketValue(value);
     },
   },
 };

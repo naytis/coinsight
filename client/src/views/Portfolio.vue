@@ -226,12 +226,6 @@ import {
   getPortfolioReport,
   getPortfolioTransactions,
 } from '../api/portfolio';
-import {
-  prettifyDate,
-  formatMarketValue,
-  formatPercent,
-  formatPercentWithoutSign,
-} from '../filters';
 import Chart from '../components/Chart';
 
 export default {
@@ -341,24 +335,6 @@ export default {
 
     chartItems() {
       return this.currentReport.valueByTime.map(item => Object.values(item));
-    },
-  },
-
-  filters: {
-    prettifyDate(date) {
-      return prettifyDate(date);
-    },
-
-    formatPercent(percent) {
-      return formatPercent(percent);
-    },
-
-    formatMarketValue(value) {
-      return formatMarketValue(value);
-    },
-
-    formatPercentWithoutSign(percent) {
-      return formatPercentWithoutSign(percent);
     },
   },
 };

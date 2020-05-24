@@ -28,7 +28,6 @@
 
 <script>
 import {getNews} from '../api/news';
-import {dateFromNow} from '../filters';
 
 export default {
   name: 'News',
@@ -54,12 +53,6 @@ export default {
         alert(e);
       }
       this.isNewsLoading = false;
-    },
-  },
-
-  filters: {
-    dateFromNow(date) {
-      return dateFromNow(date);
     },
   },
 };

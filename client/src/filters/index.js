@@ -5,7 +5,12 @@ const formatMarketValue = value => {
     return;
   }
 
-  return value.toLocaleString('en-US', {style: 'currency', currency: 'USD'});
+  return value.toLocaleString('en-US', {
+    style: 'currency',
+    currency: 'USD',
+    minimumFractionDigits: value > 999 ? 0 : 2,
+    maximumFractionDigits: value > 999 ? 0 : 5,
+  });
 };
 
 const prettifyDate = date => {
@@ -25,10 +30,19 @@ const formatPercentWithoutSign = percent => {
   return percent.toFixed(2) + '%';
 };
 
+const addFilters = Vue => {
+  Vue.filter('formatMarketValue', formatMarketValue);
+  Vue.filter('prettifyDate', prettifyDate);
+  Vue.filter('dateFromNow', dateFromNow);
+  Vue.filter('formatPercent', formatPercent);
+  Vue.filter('formatPercentWithoutSign', formatPercentWithoutSign);
+};
+
 export {
   formatMarketValue,
   dateFromNow,
   prettifyDate,
   formatPercent,
   formatPercentWithoutSign,
+  addFilters,
 };

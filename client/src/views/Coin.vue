@@ -130,7 +130,7 @@
       </v-btn>
     </v-row>
     <v-row>
-      <v-col>
+      <v-col v-if="!isHistoricalDataLoading">
         <chart
           :line-items="chartData.line"
           line-label="Price"
@@ -197,7 +197,7 @@
 
 <script>
 import {profile, marketData, historicalData} from '../api/coin';
-import {formatMarketValue, formatPercent, prettifyDate} from '../filters';
+import {formatMarketValue} from '../filters';
 import Chart from '../components/Chart';
 
 export default {
@@ -370,20 +370,6 @@ export default {
           icon: icon,
         };
       });
-    },
-  },
-
-  filters: {
-    formatPercent(percent) {
-      return formatPercent(percent);
-    },
-
-    formatMarketValue(value) {
-      return formatMarketValue(value);
-    },
-
-    prettifyDate(date) {
-      return prettifyDate(date);
     },
   },
 };
