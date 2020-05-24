@@ -7,7 +7,6 @@ namespace App\Domain\Portfolios\Interactors\Portfolios;
 use App\Coinfo\Client;
 use App\Domain\Markets\Services\CoinService;
 use App\Domain\Portfolios\Entities\ValueByTime;
-use App\Domain\Portfolios\Enums\TransactionType;
 use App\Domain\Portfolios\Models\Transaction;
 use App\Domain\Portfolios\Services\PortfolioService;
 use Carbon\Carbon;
@@ -56,13 +55,8 @@ final class GetPortfolioChartByIdInteractor
             $coin = $coins->find($transaction->coin_id);
             $coinMarketOverview = $coinOverviewCollection->firstWhere('name', $coin->name);
 
-            if ($transaction->type === TransactionType::BUY) {
-                $quantity = $transaction->quantity;
-            } else {
-                $quantity = $transaction->quantity * -1;
-            }
             $transactionsValuesByTime[] = $this->getTransactionValueByTime(
-                $quantity, $transaction->datetime, $coinMarketOverview->sparkline
+                $transaction->quantity_by_type, $transaction->datetime, $coinMarketOverview->sparkline
             );
         }
 

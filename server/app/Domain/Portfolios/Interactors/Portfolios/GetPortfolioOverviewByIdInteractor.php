@@ -7,7 +7,6 @@ namespace App\Domain\Portfolios\Interactors\Portfolios;
 use App\Domain\Markets\Services\CoinService;
 use App\Domain\Portfolios\Entities\Overview;
 use App\Domain\Portfolios\Entities\Portfolio;
-use App\Domain\Portfolios\Enums\TransactionType;
 use App\Domain\Portfolios\Models\Transaction;
 use App\Domain\Portfolios\Services\FinanceCalculator;
 use App\Domain\Portfolios\Services\PortfolioService;
@@ -57,21 +56,12 @@ final class GetPortfolioOverviewByIdInteractor
         foreach ($portfolio->transactions as $transaction) {
             $coin = $coins->find($transaction->coin_id);
 
-            if ($transaction->type === TransactionType::BUY) {
-                $portfolioTotalValue += $this->calculator->value(
-                    $transaction->quantity, $coin->marketData->price
-                );
-                $portfolioTotalCost += $this->calculator->cost(
-                    $transaction->quantity, $transaction->price_per_coin, $transaction->fee
-                );
-            } else {
-                $portfolioTotalValue -= $this->calculator->value(
-                    $transaction->quantity, $coin->marketData->price
-                );
-                $portfolioTotalCost -= $this->calculator->cost(
-                    $transaction->quantity, $transaction->price_per_coin, $transaction->fee
-                );
-            }
+            $portfolioTotalValue += $this->calculator->value(
+                $transaction->quantity_by_type, $coin->marketData->price
+            );
+            $portfolioTotalCost += $this->calculator->cost(
+                $transaction->quantity_by_type, $transaction->price_per_coin, $transaction->fee
+            );
         }
 
         if ($portfolioTotalCost === 0) {

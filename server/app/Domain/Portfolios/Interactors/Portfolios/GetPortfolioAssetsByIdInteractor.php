@@ -7,7 +7,6 @@ namespace App\Domain\Portfolios\Interactors\Portfolios;
 use App\Domain\Markets\Entities\Coin;
 use App\Domain\Markets\Services\CoinService;
 use App\Domain\Portfolios\Entities\Asset;
-use App\Domain\Portfolios\Enums\TransactionType;
 use App\Domain\Portfolios\Services\FinanceCalculator;
 use App\Domain\Portfolios\Services\PortfolioService;
 
@@ -56,23 +55,13 @@ final class GetPortfolioAssetsByIdInteractor
             $assetHoldings = 0;
 
             foreach ($coin->transactions as $transaction) {
-                if ($transaction->type === TransactionType::BUY) {
-                    $assetMarketValue += $this->calculator->value(
-                        $transaction->quantity, $coin->marketData->price
-                    );
-                    $assetNetCost += $this->calculator->cost(
-                        $transaction->quantity, $transaction->price_per_coin, $transaction->fee
-                    );
-                    $assetHoldings += $transaction->quantity;
-                } else {
-                    $assetMarketValue -= $this->calculator->value(
-                        $transaction->quantity, $coin->marketData->price
-                    );
-                    $assetNetCost -= $this->calculator->cost(
-                        $transaction->quantity, $transaction->price_per_coin, $transaction->fee
-                    );
-                    $assetHoldings -= $transaction->quantity;
-                }
+                $assetMarketValue += $this->calculator->value(
+                    $transaction->quantity_by_type, $coin->marketData->price
+                );
+                $assetNetCost += $this->calculator->cost(
+                    $transaction->quantity_by_type, $transaction->price_per_coin, $transaction->fee
+                );
+                $assetHoldings += $transaction->quantity_by_type;
             }
 
             $assetNetProfit = $this->calculator->netProfit($assetMarketValue, $assetNetCost);
