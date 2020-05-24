@@ -13,8 +13,9 @@ use Illuminate\Database\Eloquent\ModelNotFoundException;
 
 final class TransactionService
 {
-    public function paginateByPortfolioId(
+    public function paginateByPortfolioIdAndUserId(
         int $portfolioId,
+        int $userId,
         int $page,
         int $perPage,
         string $sort,
@@ -24,6 +25,7 @@ final class TransactionService
         return Transaction::with($withRelations)
             ->orderBy($sort, $direction)
             ->wherePortfolioId($portfolioId)
+            ->whereHas('portfolio', fn (Builder $query) => $query->whereUserId($userId))
             ->paginate($perPage, ['*'], null, $page);
     }
 

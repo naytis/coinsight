@@ -4,58 +4,53 @@ declare(strict_types=1);
 
 namespace App\Domain\Portfolios\Interactors\Transactions;
 
-use App\Coinfo\Client;
 use App\Domain\Portfolios\Entities\Transaction as TransactionEntity;
 use App\Domain\Portfolios\Models\Transaction;
-use App\Domain\Portfolios\Services\PortfolioService;
 use App\Domain\Portfolios\Services\FinanceCalculator;
 use App\Domain\Portfolios\Services\TransactionService;
 
 final class GetTransactionsInteractor
 {
-    private Client $client;
     private FinanceCalculator $calculator;
-    private PortfolioService $portfolioService;
     private TransactionService $transactionService;
 
     public function __construct(
-        Client $client,
         FinanceCalculator $financeCalculator,
-        PortfolioService $portfolioService,
         TransactionService $transactionService
     ) {
-        $this->client = $client;
         $this->calculator = $financeCalculator;
-        $this->portfolioService = $portfolioService;
         $this->transactionService = $transactionService;
     }
 
     public function execute(GetTransactionsRequest $request): GetTransactionsResponse
     {
-        $portfolio = $this->portfolioService->getByIdAndUserId($request->portfolioId, $request->userId);
-        $transactionCollection = $this->transactionService->paginateByPortfolioId(
-            $portfolio->id,
+        $transactionsPaginator = $this->transactionService->paginateByPortfolioIdAndUserId(
+            $request->portfolioId,
+            $request->userId,
             $request->page,
             $request->perPage,
             $request->sort,
             $request->direction,
-            ['coin']
+            ['coin', 'coin.marketData']
         );
 
-        $coinsNames = $transactionCollection
-            ->map(fn (Transaction $transaction) => $transaction->coin->name)
-            ->toArray();
-        $coinOverviewCollection = collect($this->client->marketsForCoins($coinsNames));
+        if ($transactionsPaginator->isEmpty()) {
+            return new GetTransactionsResponse([
+                'transactions' => collect(),
+                'total' => $transactionsPaginator->total(),
+                'page' => $transactionsPaginator->currentPage(),
+                'perPage' => $transactionsPaginator->perPage(),
+                'lastPage' => $transactionsPaginator->lastPage(),
+            ]);
+        }
 
-        $transactionEntityCollection = $transactionCollection->map(
-            function (Transaction $transaction) use ($coinOverviewCollection) {
-                $coinOverview = $coinOverviewCollection->firstWhere('name', $transaction->coin->name);
-
+        $transactionEntityCollection = $transactionsPaginator->map(
+            function (Transaction $transaction) {
                 $cost = $this->calculator->cost(
                     $transaction->quantity, $transaction->price_per_coin, $transaction->fee
                 );
                 $currentValue = $this->calculator->value(
-                    $transaction->quantity, $coinOverview->price
+                    $transaction->quantity, $transaction->coin->marketData->price
                 );
                 $valueChange = $this->calculator->valueChange($currentValue, $cost);
 
@@ -70,6 +65,10 @@ final class GetTransactionsInteractor
 
         return new GetTransactionsResponse([
             'transactions' => $transactionEntityCollection,
+            'total' => $transactionsPaginator->total(),
+            'page' => $transactionsPaginator->currentPage(),
+            'perPage' => $transactionsPaginator->perPage(),
+            'lastPage' => $transactionsPaginator->lastPage(),
         ]);
     }
 }
