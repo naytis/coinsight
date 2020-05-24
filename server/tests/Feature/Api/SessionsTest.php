@@ -42,7 +42,7 @@ final class SessionsTest extends ApiTestCase
         $this->headers['Authorization'] = 'Bearer ' . $refreshToken;
 
         $this
-            ->apiGet('sessions/access-token')
+            ->apiGet('sessions/refresh')
             ->assertStatus(Response::HTTP_OK)
             ->assertJsonStructure([
                 'data' => [
