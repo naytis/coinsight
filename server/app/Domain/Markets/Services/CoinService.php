@@ -38,7 +38,10 @@ final class CoinService
     public function paginateByPortfolioId(
         int $portfolioId, int $page, int $perPage, array $withRelations = []
     ): LengthAwarePaginator {
-        return Coin::with($withRelations)
+        return Coin::with([
+            ...$withRelations,
+            'transactions' => fn ($query) => $query->where('portfolio_id', $portfolioId)
+        ])
             ->whereHas('transactions', fn ($query) => $query->where('portfolio_id', $portfolioId))
             ->paginate($perPage, ['*'], null, $page);
     }
