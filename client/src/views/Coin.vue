@@ -14,8 +14,8 @@
     </v-overlay>
     <v-row>
       <v-col>
-        <v-row>
-          <v-col class="py-0" v-if="!isProfileLoading">
+        <v-row v-if="!isProfileLoading">
+          <v-col class="py-0">
             <div class="d-flex align-center">
               <div>
                 <v-img :src="profile.icon" width="4em" height="4em" />
@@ -28,45 +28,11 @@
               </div>
             </div>
           </v-col>
-          <v-col class="py-0" cols="4" align-self="center">
-            <v-dialog v-model="addTransactionDialog" width="700">
-              <template v-slot:activator="{on}">
-                <v-btn small block color="text" outlined v-on="on">
-                  Add transaction
-                </v-btn>
-              </template>
-              <v-card>
-                <v-card-text class="py-4">
-                  <v-tabs grow background-color="surface">
-                    <v-tab>Buy</v-tab>
-                    <v-tab>Sell</v-tab>
-                    <v-tab-item class="py-2">
-                      <v-form>
-                        <v-text-field
-                          label="Price per coin"
-                          :value="marketData.price"
-                          flat
-                          prefix="$"
-                        />
-                        <v-text-field label="Quantity" flat value="0" />
-                        <v-text-field label="Fee" prefix="$" flat value="0" />
-                        <v-text-field label="Date" flat />
-                      </v-form>
-                      <div class="d-flex justify-end">
-                        <v-btn
-                          class="mt-4"
-                          color="primary"
-                          outlined
-                          @click="addTransactionDialog = false"
-                        >
-                          Save transaction
-                        </v-btn>
-                      </div>
-                    </v-tab-item>
-                  </v-tabs>
-                </v-card-text>
-              </v-card>
-            </v-dialog>
+          <v-col class="py-0" cols="5" align-self="center">
+            <add-transaction-button
+              :coin-price="marketData.price"
+              :coin-symbol="profile.symbol"
+            />
           </v-col>
         </v-row>
       </v-col>
@@ -105,7 +71,7 @@
         />
       </v-col>
     </v-row>
-    <v-row justify="end" class="mt-4 px-3">
+    <v-row v-if="!isHistoricalDataLoading" justify="end" class="mt-4 px-3">
       <v-btn
         class="mx-1"
         :input-value="period === value"
@@ -186,14 +152,16 @@
 
 <script>
 import {profile, marketData, historicalData} from '../api/coin';
-import Card from '../components/Card';
-import Chart from '../components/Chart';
+import AddTransactionButton from '../components/coin/AddTransactionButton';
+import Card from '../components/common/Card';
+import Chart from '../components/common/Chart';
 import percentColorClass from '../mixins/percentColorClass';
 
 export default {
   name: 'Coin',
 
   components: {
+    AddTransactionButton,
     Card,
     Chart,
   },
@@ -205,7 +173,6 @@ export default {
       isProfileLoading: false,
       isMarketDataLoading: false,
       isHistoricalDataLoading: false,
-      addTransactionDialog: false,
       profile: {},
       marketData: {},
       historicalData: [],

@@ -21,7 +21,7 @@
 </template>
 
 <script>
-import percentColorClass from '../mixins/percentColorClass';
+import percentColorClass from '../../mixins/percentColorClass';
 
 export default {
   name: 'Card',

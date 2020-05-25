@@ -1,5 +1,12 @@
 <template>
   <v-col>
+    <v-overlay absolute :value="isGlobalStatsLoading || isCoinsLoading">
+      <v-progress-circular
+        size="60"
+        indeterminate
+        color="primary"
+      ></v-progress-circular>
+    </v-overlay>
     <v-row justify="space-around">
       <v-col
         cols="3"
@@ -84,7 +91,7 @@
 
 <script>
 import {globalStats, coins} from '../api/markets';
-import Card from '../components/Card';
+import Card from '../components/common/Card';
 import percentColorClass from '../mixins/percentColorClass';
 
 export default {

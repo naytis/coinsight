@@ -1,7 +1,7 @@
 import Vue from 'vue';
 import VueRouter from 'vue-router';
 import Login from '../views/Login';
-import AuthGuard from '../components/AuthGuard';
+import AuthGuard from '../components/common/AuthGuard';
 import Register from '../views/Register';
 import Markets from '../views/Markets';
 import Coin from '../views/Coin';
@@ -28,9 +28,6 @@ const routes = [
     path: '/markets',
     name: 'markets',
     component: Markets,
-    meta: {
-      requiresAuth: true,
-    },
   },
   {
     path: '/news',

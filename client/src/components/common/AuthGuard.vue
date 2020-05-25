@@ -3,12 +3,12 @@
 </template>
 
 <script>
-import store from '../store';
+import store from '../../store';
 import {
   FETCH_CURRENT_USER,
   IS_LOGGED_IN,
   LOAD_TOKENS_FROM_STORAGE,
-} from '../store/auth/types';
+} from '../../store/auth/types';
 
 export default {
   name: 'AuthGuard',
