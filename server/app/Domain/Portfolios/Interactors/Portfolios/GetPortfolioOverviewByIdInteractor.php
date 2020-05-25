@@ -64,11 +64,7 @@ final class GetPortfolioOverviewByIdInteractor
             );
         }
 
-        if ($portfolioTotalCost === 0) {
-            $portfolioValueChange = $this->calculator->valueChange($portfolioTotalValue, $portfolioTotalCost);
-        } else {
-            $portfolioValueChange = 0;
-        }
+        $portfolioValueChange = $this->calculator->valueChange($portfolioTotalValue, $portfolioTotalCost);
 
         return new GetPortfolioOverviewByIdResponse([
             'overview' => new Overview([

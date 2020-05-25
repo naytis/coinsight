@@ -18,6 +18,10 @@ final class FinanceCalculator
 
     public function valueChange(float $currentValue, float $cost): float
     {
+        if ($cost === 0) {
+            return 0;
+        }
+
         return ($currentValue - $cost) / $cost * 100;
     }
 
@@ -28,6 +32,10 @@ final class FinanceCalculator
 
     public function share(float $assetValue, float $portfolioValue): float
     {
+        if ($portfolioValue === 0) {
+            return 0;
+        }
+
         return 100 * $assetValue / $portfolioValue;
     }
 }
