@@ -4,31 +4,25 @@ declare(strict_types=1);
 
 namespace App\Domain\Portfolios\Interactors\Transactions;
 
-use App\Coinfo\Client;
 use App\Domain\Markets\Services\CoinService;
 use App\Domain\Portfolios\Entities\Transaction as TransactionEntity;
-use App\Domain\Portfolios\Exceptions\TransactionNotFound;
-use App\Domain\Portfolios\Models\Transaction;
 use App\Domain\Portfolios\Services\FinanceCalculator;
 use App\Domain\Portfolios\Services\PortfolioService;
 use App\Domain\Portfolios\Services\TransactionService;
 
 final class UpdateTransactionByIdInteractor
 {
-    private Client $client;
     private FinanceCalculator $calculator;
     private PortfolioService $portfolioService;
     private CoinService $coinService;
     private TransactionService $transactionService;
 
     public function __construct(
-        Client $client,
         FinanceCalculator $financeCalculator,
         PortfolioService $portfolioService,
         CoinService $coinService,
         TransactionService $transactionService
     ) {
-        $this->client = $client;
         $this->calculator = $financeCalculator;
         $this->portfolioService = $portfolioService;
         $this->coinService = $coinService;
@@ -38,7 +32,7 @@ final class UpdateTransactionByIdInteractor
     public function execute(UpdateTransactionByIdRequest $request): UpdateTransactionByIdResponse
     {
         $transaction = $this->transactionService->getByIdAndUserId(
-            $request->transactionId, $request->userId, ['coin']
+            $request->transactionId, $request->userId, ['coin', 'coin.marketData']
         );
 
         if ($request->portfolioId) {
@@ -73,10 +67,8 @@ final class UpdateTransactionByIdInteractor
 
         $transaction->save();
 
-        $coinMarketData = $this->client->coinMarketData($transaction->coin->name, $transaction->coin->symbol);
-
         $cost = $this->calculator->cost($transaction->quantity, $transaction->price_per_coin, $transaction->fee);
-        $currentValue = $this->calculator->value($transaction->quantity, $coinMarketData->price);
+        $currentValue = $this->calculator->value($transaction->quantity, $transaction->coin->marketData->price);
         $valueChange = $this->calculator->valueChange($currentValue, $cost);
 
         $transactionEntity = TransactionEntity::fromModel($transaction);

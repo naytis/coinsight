@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Tests\Feature\Api;
 
 use App\Domain\Markets\Models\Coin;
+use App\Domain\Markets\Models\CoinMarketData;
 use App\Domain\Portfolios\Enums\TransactionType;
 use App\Domain\Portfolios\Models\Portfolio;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -29,6 +30,9 @@ final class TransactionsTest extends ApiTestCase
                 'symbol' => $this->currencySymbol(),
             ])
             ->id;
+        factory(CoinMarketData::class)->create([
+            'coin_id' => $this->coinId,
+        ]);
         $this->portfolioId = factory(Portfolio::class)->create()->id;
     }
 
