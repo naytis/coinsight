@@ -34,7 +34,6 @@ final class CoinfoTest extends TestCase
             $this->assertEquals($expectedResponse[$i]['name'], $markets[$i]->name);
             $this->assertEquals($expectedResponse[$i]['symbol'], $markets[$i]->symbol);
             $this->assertEquals($expectedResponse[$i]['image'], $markets[$i]->icon);
-            $this->assertEquals($expectedResponse[$i]['market_cap_rank'], $markets[$i]->rank);
             $this->assertEquals($expectedResponse[$i]['current_price'], $markets[$i]->price);
             $this->assertEquals($expectedResponse[$i]['price_change_percentage_24h'], $markets[$i]->priceChange24h);
             $this->assertEquals($expectedResponse[$i]['market_cap'], $markets[$i]->marketCap);
@@ -72,58 +71,7 @@ final class CoinfoTest extends TestCase
 
     }
 
-    public function test_coin_market_data()
-    {
-        $expectedResponse = $this->fakeCoinMarketDataResponse();
-
-        $marketData = $this->client->coinMarketData($this->currencyName(), $this->currencySymbol());
-
-        $this->assertEquals($expectedResponse['name'], $marketData->name);
-        $this->assertEquals($expectedResponse['symbol'], $marketData->symbol);
-        $this->assertEquals($expectedResponse['rank'], $marketData->rank);
-        $this->assertEquals($expectedResponse['circulating_supply'], $marketData->circulatingSupply);
-        $this->assertEquals($expectedResponse['max_supply'], $marketData->maxSupply);
-
-        $quote = $expectedResponse['quotes']['USD'];
-        $this->assertEquals($quote['price'], $marketData->price);
-        $this->assertEquals($quote['volume_24h'], $marketData->volume);
-        $this->assertEquals($quote['volume_24h_change_24h'], $marketData->volumeChange24h);
-        $this->assertEquals($quote['market_cap'], $marketData->marketCap);
-        $this->assertEquals($quote['market_cap_change_24h'], $marketData->marketCapChange24h);
-        $this->assertEquals($quote['percent_change_1h'], $marketData->priceChange1h);
-        $this->assertEquals($quote['percent_change_24h'], $marketData->priceChange24h);
-        $this->assertEquals($quote['percent_change_7d'], $marketData->priceChange7d);
-        $this->assertEquals($quote['percent_change_30d'], $marketData->priceChange30d);
-        $this->assertEquals($quote['percent_change_1y'], $marketData->priceChange1y);
-    }
-
-    public function test_coin_price_by_time_range()
-    {
-        $expectedResponse = $this->fakeCoinHistoricalDataByDateRangeResponse();
-
-        $priceByTimeRange = $this->client->coinHistoricalDataByDateRange(
-            $this->currencyName(),
-            $this->currencySymbol(),
-            $start = $now = Carbon::now(),
-            $end = $now->subDay(),
-            $limit = 10,
-            Interval::FIFTEEN_MINUTES()
-        );
-
-        $this->assertCount(count($expectedResponse), $priceByTimeRange);
-
-        for ($i = 0; $i < count($expectedResponse); $i++) {
-            $this->assertTrue(
-                Carbon::parse($expectedResponse[$i]['timestamp'])->equalTo($priceByTimeRange[$i]->timestamp)
-            );
-            $this->assertEquals($expectedResponse[$i]['price'], $priceByTimeRange[$i]->price);
-            $this->assertEquals($expectedResponse[$i]['volume_24h'], $priceByTimeRange[$i]->volume);
-            $this->assertEquals($expectedResponse[$i]['market_cap'], $priceByTimeRange[$i]->marketCap);
-        }
-
-    }
-
-    public function test_coin_price_by_time()
+    public function test_coin_historical_data()
     {
         $expectedResponse = $this->fakeCoinHistoricalDataResponse();
 
@@ -132,8 +80,9 @@ final class CoinfoTest extends TestCase
         $this->assertCount(count($expectedResponse['prices']), $priceByTime);
 
         for ($i = 0; $i < count($priceByTime); $i++) {
-            $this->assertTrue(
-                Carbon::parse($expectedResponse['prices'][$i][0])->equalTo($priceByTime[$i]->timestamp)
+            $this->assertEquals(
+                Carbon::createFromTimestampMs($expectedResponse['prices'][$i][0]),
+                $priceByTime[$i]->timestamp
             );
             $this->assertEquals($expectedResponse['prices'][$i][1], $priceByTime[$i]->price);
             $this->assertEquals($expectedResponse['market_caps'][$i][1], $priceByTime[$i]->marketCap);

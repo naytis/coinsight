@@ -6,6 +6,7 @@ namespace Tests\Feature\Api;
 
 use App\Domain\Markets\Models\Coin;
 use App\Domain\Markets\Models\CoinMarketData;
+use App\Domain\Markets\Models\CoinProfile;
 use App\Domain\Markets\Models\News;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\Response;
@@ -91,29 +92,30 @@ final class MarketsTest extends ApiTestCase
             'symbol' => 'symbol',
         ]);
 
-        $response = $this->apiGet("/coins/{$coinId}/profile");
-
-        $response->assertStatus(Response::HTTP_OK)->assertJsonStructure([
-            'data' => [
-                'id',
-                'name',
-                'symbol',
-                'icon',
-                'tagline',
-                'description',
-                'type',
-                'genesis_date',
-                'consensus_mechanism',
-                'hashing_algorithm',
-                'links' => [
-                    '*' => [
-                        'type',
-                        'link',
-                    ]
+        $this
+            ->apiGet("/coins/{$coinId}/profile")
+            ->assertStatus(Response::HTTP_OK)
+            ->assertJsonStructure([
+                'data' => [
+                    'id',
+                    'name',
+                    'symbol',
+                    'icon',
+                    'tagline',
+                    'description',
+                    'type',
+                    'genesis_date',
+                    'consensus_mechanism',
+                    'hashing_algorithm',
+                    'links' => [
+                        '*' => [
+                            'type',
+                            'link',
+                        ]
+                    ],
                 ],
-            ],
-            'meta' => []
-        ]);
+                'meta' => []
+            ]);
     }
 
     public function test_market_data()
@@ -122,30 +124,31 @@ final class MarketsTest extends ApiTestCase
             'name' => 'currency name',
             'symbol' => 'symbol',
         ]);
-
-        $response = $this->apiGet("/coins/{$coinId}/latest");
-
-        $response->assertStatus(Response::HTTP_OK)->assertJsonStructure([
-            'data' => [
-                'id',
-                'name',
-                'symbol',
-                'rank',
-                'circulating_supply',
-                'max_supply',
-                'price',
-                'volume',
-                'volume_change_24h',
-                'market_cap',
-                'market_cap_change_24h',
-                'price_change_1h',
-                'price_change_24h',
-                'price_change_7d',
-                'price_change_30d',
-                'price_change_1y',
-            ],
-            'meta' => []
+        factory(CoinMarketData::class)->create([
+            'coin_id' => $coinId,
         ]);
+
+        $this
+            ->apiGet("/coins/{$coinId}/latest")
+            ->assertStatus(Response::HTTP_OK)
+            ->assertJsonStructure([
+                'data' => [
+                    'id',
+                    'name',
+                    'symbol',
+                    'circulating_supply',
+                    'max_supply',
+                    'price',
+                    'volume',
+                    'market_cap',
+                    'price_change_1h',
+                    'price_change_24h',
+                    'price_change_7d',
+                    'price_change_30d',
+                    'price_change_1y',
+                ],
+                'meta' => []
+            ]);
     }
 
     public function test_historical_data()

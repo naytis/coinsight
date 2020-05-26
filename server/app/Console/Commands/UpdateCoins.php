@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\Console\Commands;
 
 use App\Coinfo\Client;
-use App\Coinfo\Types\CoinOverview;
+use App\Coinfo\Types\CoinMarketData;
 use App\Domain\Markets\Models\Coin;
 use Carbon\Carbon;
 use Exception;
@@ -82,12 +82,12 @@ final class UpdateCoins extends Command
         $names = $retrievedCoins->pluck('name');
         $persistedCoins = Coin::whereIn('name', $names)->get()->toBase();
 
-        return $retrievedCoins->filter(fn (CoinOverview $coin) =>
+        return $retrievedCoins->filter(fn (CoinMarketData $coin) =>
             !$persistedCoins->contains('name', $coin->name)
         );
     }
 
-    private function makeCoinRecord(CoinOverview $coinOverview): array
+    private function makeCoinRecord(CoinMarketData $coinOverview): array
     {
         try {
             $iconUrl = $this->saveIcon($coinOverview);
@@ -104,7 +104,7 @@ final class UpdateCoins extends Command
         ];
     }
 
-    private function saveIcon(CoinOverview $coinOverview): string
+    private function saveIcon(CoinMarketData $coinOverview): string
     {
         $filename = Str::slug($coinOverview->name) . '.png';
         $filePath = 'public/' . $filename;
@@ -116,7 +116,7 @@ final class UpdateCoins extends Command
         return Storage::url($filename);
     }
 
-    private function addError(CoinOverview $coin, Exception $e): void
+    private function addError(CoinMarketData $coin, Exception $e): void
     {
         $this->coinErrors[] = [
             'coin_name' => $coin->name,

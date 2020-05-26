@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace App\Coinfo\Aggregators;
 
-use App\Coinfo\Factories\CoinGecko\CoinOverviewCollectionFactory;
+use App\Coinfo\Factories\CoinGecko\CoinMarketDataCollectionFactory;
 use App\Coinfo\Factories\CoinGecko\CoinHistoricalDataCollectionFactory;
-use App\Coinfo\Types\CoinOverviewCollection;
+use App\Coinfo\Types\CoinMarketDataCollection;
 use App\Coinfo\Types\CoinHistoricalDataCollection;
 
 final class CoinGecko extends Aggregator
@@ -17,17 +17,19 @@ final class CoinGecko extends Aggregator
         int $page = 1,
         int $perPage = 100,
         array $ids = [],
-        bool $sparkline = false
-    ): CoinOverviewCollection {
+        bool $sparkline = false,
+        bool $priceChangePercentage = false
+    ): CoinMarketDataCollection {
         $data = $this->request('coins/markets', [
             'vs_currency' => 'usd',
             'page' => $page,
             'per_page' => $perPage,
             'ids' => implode(",", $ids),
             'sparkline' => $sparkline ? "true" : "false",
+            'price_change_percentage' => $priceChangePercentage ? '1h,7d,30d,1y' : '',
         ]);
 
-        return CoinOverviewCollectionFactory::create($data);
+        return CoinMarketDataCollectionFactory::create($data);
     }
 
 

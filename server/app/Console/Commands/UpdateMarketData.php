@@ -22,16 +22,16 @@ final class UpdateMarketData extends Command
 
     public function handle(Client $client)
     {
-        $coinOverviewCollection = collect(
+        $coinMarketDataCollection = collect(
             $client->markets()
         );
 
         $coinModelCollection = Coin::whereIn(
-            'name', $coinOverviewCollection->pluck('name')->toArray()
+            'name', $coinMarketDataCollection->pluck('name')->toArray()
         )->get();
 
-        foreach ($coinOverviewCollection as $coinOverview) {
-            $coinModel = $coinModelCollection->firstWhere('name', $coinOverview->name);
+        foreach ($coinMarketDataCollection as $coinMarketData) {
+            $coinModel = $coinModelCollection->firstWhere('name', $coinMarketData->name);
 
             if (!$coinModel) {
                 continue;
@@ -42,11 +42,16 @@ final class UpdateMarketData extends Command
                     'coin_id' => $coinModel->id,
                 ],
                 [
-                    'price' => $coinOverview->price,
-                    'price_change_24h' => $coinOverview->priceChange24h,
-                    'market_cap' => $coinOverview->marketCap,
-                    'volume' => $coinOverview->volume,
-                    'circulating_supply' => $coinOverview->circulatingSupply,
+                    'price' => $coinMarketData->price,
+                    'price_change_1h' => $coinMarketData->priceChange1h,
+                    'price_change_24h' => $coinMarketData->priceChange24h,
+                    'price_change_7d' => $coinMarketData->priceChange7d,
+                    'price_change_30d' => $coinMarketData->priceChange30d,
+                    'price_change_1y' => $coinMarketData->priceChange1y,
+                    'market_cap' => $coinMarketData->marketCap,
+                    'volume' => $coinMarketData->volume,
+                    'circulating_supply' => $coinMarketData->circulatingSupply,
+                    'max_supply' => $coinMarketData->maxSupply,
                 ],
             );
         }

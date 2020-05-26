@@ -5,8 +5,6 @@ declare(strict_types=1);
 namespace Tests\Feature\Coinfo;
 
 use App\Coinfo\Aggregators\CoinGecko;
-use App\Coinfo\Aggregators\Coinpaprika;
-use App\Coinfo\Aggregators\CoinStats;
 use App\Coinfo\Aggregators\Messari;
 use Illuminate\Support\Facades\Http;
 
@@ -48,20 +46,6 @@ trait CoinfoDataProvider
                 ),
                 'response' => $this->fakeCoinProfileResponse(),
             ],
-            'coinMarketData' => [
-                'url' => $this->getEndpointUrl(
-                    Coinpaprika::BASE_URL,
-                    'tickers/symbol-currency-name',
-                ),
-                'response' => $this->fakeCoinMarketDataResponse(),
-            ],
-            'coinHistoricalDataByDateRange' => [
-                'url' => $this->getEndpointUrlWithWildcard(
-                    Coinpaprika::BASE_URL,
-                    'tickers/symbol-currency-name/historical',
-                ),
-                'response' => $this->fakeCoinHistoricalDataByDateRangeResponse(),
-            ],
             'coinHistoricalData' => [
                 'url' => $this->getEndpointUrlWithWildcard(
                     CoinGecko::BASE_URL,
@@ -96,6 +80,7 @@ trait CoinfoDataProvider
                 'market_cap' => 1234.567,
                 'price_change_percentage_24h' => -12.34,
                 'circulating_supply' => 1,
+                'total_supply' => 1,
                 'sparkline_in_7d' => [
                     'price' => [
                         1,
@@ -112,6 +97,7 @@ trait CoinfoDataProvider
                 'market_cap' => 123.45,
                 'price_change_percentage_24h' => -12.34,
                 'circulating_supply' => 1,
+                'total_supply' => 1,
                 'sparkline_in_7d' => [
                     'price' => [
                         1,
@@ -128,6 +114,7 @@ trait CoinfoDataProvider
                 'market_cap' => 123.45,
                 'price_change_percentage_24h' => -12.34,
                 'circulating_supply' => 1,
+                'total_supply' => 1,
                 'sparkline_in_7d' => [
                     'price' => [
                         1,
@@ -178,56 +165,6 @@ trait CoinfoDataProvider
                         ],
                     ],
                 ],
-            ],
-        ];
-    }
-
-    public function fakeCoinMarketDataResponse(): array
-    {
-        return [
-            'name' => 'name',
-            'symbol' => 'symbol',
-            'rank' => 1,
-            'circulating_supply' => 12345,
-            'max_supply' => 12345,
-            'quotes' => [
-                'USD' => [
-                    'price' => 123.45,
-                    'volume_24h' => 123.45,
-                    'volume_24h_change_24h' => -12.45,
-                    'market_cap' => 12345,
-                    'market_cap_change_24h' => -12.34,
-                    'percent_change_1h' => -12.34,
-                    'percent_change_12h' => -12.34,
-                    'percent_change_24h' => -12.34,
-                    'percent_change_7d' => -12.34,
-                    'percent_change_30d' => -12.34,
-                    'percent_change_1y' => -12.34,
-                ]
-            ]
-        ];
-    }
-
-    public function fakeCoinHistoricalDataByDateRangeResponse(): array
-    {
-        return [
-            [
-                'timestamp' => '2020-01-01T00:00:00Z',
-                'price' => 123.45,
-                'volume_24h' => 12345,
-                'market_cap' => 12345,
-            ],
-            [
-                'timestamp' => '2020-01-02T00:00:00Z',
-                'price' => 123.45,
-                'volume_24h' => 12345,
-                'market_cap' => 12345,
-            ],
-            [
-                'timestamp' => '2020-01-03T00:00:00Z',
-                'price' => 123.45,
-                'volume_24h' => 12345,
-                'market_cap' => 12345,
             ],
         ];
     }

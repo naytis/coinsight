@@ -17,6 +17,7 @@ final class CoinProfile extends DataTransferObject
     public ?Carbon $genesisDate;
     public ?string $consensusMechanism;
     public ?string $hashingAlgorithm;
+    public ?float $maxSupply;
     public ?LinkCollection $links;
     public ?LinkCollection $blockExplorers;
 }
