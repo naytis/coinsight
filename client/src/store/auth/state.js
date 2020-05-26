@@ -4,4 +4,5 @@ export default {
     refreshToken: null,
   },
   user: null,
+  isUserLoading: false,
 };

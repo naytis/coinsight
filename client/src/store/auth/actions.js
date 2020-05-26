@@ -1,13 +1,16 @@
 import {
   FETCH_CURRENT_USER,
   HAS_TOKENS,
+  IS_USER_LOADING,
   LOAD_TOKENS_FROM_STORAGE,
   LOGIN,
   LOGOUT,
   REFRESH_ACCESS_TOKEN,
   REGISTER,
+  RESET_IS_USER_LOADING,
   SET_ACCESS_TOKEN,
   SET_CURRENT_USER,
+  SET_IS_USER_LOADING,
   SET_REFRESH_TOKEN,
 } from './types';
 import {
@@ -66,17 +69,30 @@ export default {
     }
   },
   async [REFRESH_ACCESS_TOKEN]({commit}) {
-    const result = await refreshAccessToken();
+    commit(SET_IS_USER_LOADING);
+    try {
+      const result = await refreshAccessToken();
 
-    commit(SET_ACCESS_TOKEN, result.data.accessToken);
+      commit(SET_ACCESS_TOKEN, result.data.accessToken);
 
-    storage.setAccessToken(result.data.accessToken);
+      storage.setAccessToken(result.data.accessToken);
+    } finally {
+      commit(RESET_IS_USER_LOADING);
+    }
   },
   async [FETCH_CURRENT_USER]({commit, getters}) {
-    if (getters[HAS_TOKENS]) {
-      const result = await getCurrentUser();
+    if (getters[IS_USER_LOADING]) {
+      return;
+    }
+    commit(SET_IS_USER_LOADING);
 
-      commit(SET_CURRENT_USER, result.data);
+    try {
+      if (getters[HAS_TOKENS]) {
+        const result = await getCurrentUser();
+        commit(SET_CURRENT_USER, result.data);
+      }
+    } finally {
+      commit(RESET_IS_USER_LOADING);
     }
   },
 };

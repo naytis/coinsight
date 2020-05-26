@@ -1,6 +1,8 @@
 export const SET_ACCESS_TOKEN = 'setAccessToken';
 export const SET_REFRESH_TOKEN = 'setRefreshToken';
 export const SET_CURRENT_USER = 'setCurrentUser';
+export const SET_IS_USER_LOADING = 'setIsUserLoading';
+export const RESET_IS_USER_LOADING = 'resetIsUserLoading';
 
 export const REGISTER = 'register';
 export const LOGIN = 'login';
@@ -13,3 +15,4 @@ export const IS_LOGGED_IN = 'isLoggedIn';
 export const HAS_TOKENS = 'hasTokens';
 export const IS_ACCESS_TOKEN_NEED_REFRESH = 'isAccessTokenNeedRefresh';
 export const GET_CURRENT_USER = 'getCurrentUser';
+export const IS_USER_LOADING = 'isUserLoading';

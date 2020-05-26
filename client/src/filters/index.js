@@ -5,11 +5,23 @@ const formatMarketValue = value => {
     return;
   }
 
+  let maximumFractionDigits, minimumFractionDigits;
+  if (value > 999 || value < -999) {
+    maximumFractionDigits = 0;
+    minimumFractionDigits = 0;
+  } else if ((value < 999 && value > 0.01) || (value > -999 && value < -0.01)) {
+    maximumFractionDigits = 2;
+    minimumFractionDigits = 2;
+  } else {
+    maximumFractionDigits = 5;
+    minimumFractionDigits = 2;
+  }
+
   return value.toLocaleString('en-US', {
     style: 'currency',
     currency: 'USD',
-    minimumFractionDigits: value > 999 ? 0 : 2,
-    maximumFractionDigits: value > 999 ? 0 : 5,
+    minimumFractionDigits,
+    maximumFractionDigits,
   });
 };
 

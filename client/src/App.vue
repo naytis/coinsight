@@ -31,7 +31,7 @@
           </v-list>
         </v-menu>
       </v-flex>
-      <div v-else class="pr-3">
+      <div v-else-if="!isLoggedIn && !isUserLoading" class="pr-3">
         <v-btn color="primary" :to="{name: 'login'}" class="mr-2">
           Login
         </v-btn>
@@ -68,9 +68,9 @@
     </v-navigation-drawer>
 
     <v-content>
-      <div class="wrapper">
+      <v-container fluid class="wrapper">
         <router-view />
-      </div>
+      </v-container>
     </v-content>
   </v-app>
 </template>
@@ -82,6 +82,7 @@ import {
   HAS_TOKENS,
   IS_ACCESS_TOKEN_NEED_REFRESH,
   IS_LOGGED_IN,
+  IS_USER_LOADING,
   LOGOUT,
   REFRESH_ACCESS_TOKEN,
 } from './store/auth/types';
@@ -93,7 +94,7 @@ export default {
     return {
       sidebarLinks: [
         {
-          routeTo: {name: 'portfolio'},
+          routeTo: {name: 'portfolios'},
           icon: 'mdi-briefcase',
           title: 'Portfolio',
         },
@@ -142,6 +143,7 @@ export default {
       isAccessTokenNeedRefresh: IS_ACCESS_TOKEN_NEED_REFRESH,
       isLoggedIn: IS_LOGGED_IN,
       hasTokens: HAS_TOKENS,
+      isUserLoading: IS_USER_LOADING,
     }),
 
     displayDrawer: {
