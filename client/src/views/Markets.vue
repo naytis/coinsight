@@ -13,6 +13,7 @@
           :value="globalStatsItem.value"
           :filter="globalStatsItem.filter"
           :is-data-loading="isGlobalStatsLoading"
+          values-typography-class="title"
         />
       </v-col>
     </v-row>

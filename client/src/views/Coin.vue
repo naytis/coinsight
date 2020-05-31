@@ -59,6 +59,7 @@
           :value="marketDataItem.value"
           :filter="marketDataItem.filter"
           :percent="marketDataItem.percentChange"
+          values-typography-class="subtitle-1"
         />
       </v-col>
     </v-row>
@@ -262,13 +263,11 @@ export default {
           title: 'Market Cap',
           value: this.marketData.marketCap,
           filter: 'formatMarketValue',
-          percentChange: this.marketData.marketCapChange24H,
         },
         {
           title: 'Volume (24h)',
           value: this.marketData.volume,
           filter: 'formatMarketValue',
-          percentChange: this.marketData.volumeChange24H,
         },
         {
           title: 'Circulating Supply',
