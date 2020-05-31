@@ -12,7 +12,7 @@
                 <v-img :src="profile.icon" width="4em" height="4em" />
               </div>
               <div class="ml-3">
-                <div class="display-1">
+                <div class="headline">
                   {{ profile.name }} ({{ profile.symbol.toUpperCase() }})
                 </div>
                 <div class="muted">{{ profile.tagline }}</div>
@@ -21,6 +21,7 @@
           </v-col>
           <v-col class="py-0" cols="5" align-self="center">
             <add-transaction-button
+              v-if="!isMarketDataLoading"
               :coin-price="marketData.price"
               :coin-symbol="profile.symbol"
             />
@@ -116,23 +117,31 @@
             <tbody>
               <tr>
                 <td>Token Type</td>
-                <td>
+                <td v-if="profile.type !== null">
                   {{ profile.type }}
                 </td>
+                <td v-else>—</td>
               </tr>
               <tr>
                 <td>Genesis Date</td>
-                <td>
+                <td v-if="profile.genesisDate !== null">
                   {{ profile.genesisDate | prettifyDate }}
                 </td>
+                <td v-else>—</td>
               </tr>
               <tr>
                 <td>Hashing Algorithm</td>
-                <td>{{ profile.hashingAlgorithm }}</td>
+                <td v-if="profile.hashingAlgorithm !== null">
+                  {{ profile.hashingAlgorithm }}
+                </td>
+                <td v-else>—</td>
               </tr>
               <tr>
                 <td>Consensus Mechanism</td>
-                <td>{{ profile.consensusMechanism }}</td>
+                <td v-if="profile.consensusMechanism !== null">
+                  {{ profile.consensusMechanism }}
+                </td>
+                <td v-else>—</td>
               </tr>
             </tbody>
           </template>
@@ -233,6 +242,10 @@ export default {
     },
 
     formatSupply(supply) {
+      if (supply === 0) {
+        return '––';
+      }
+
       return (
         supply.toLocaleString('en-US') + ' ' + this.profile.symbol.toUpperCase()
       );
