@@ -14,6 +14,7 @@ final class CoinMarketDataCollectionFactory
         $arrayOfCoins = array_map(
             function($coin) {
                 return new CoinMarketData([
+                    'id' => $coin['id'],
                     'name' => $coin['name'],
                     'symbol' => $coin['symbol'],
                     'icon' => $coin['image'],

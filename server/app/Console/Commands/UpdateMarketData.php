@@ -22,9 +22,7 @@ final class UpdateMarketData extends Command
 
     public function handle(Client $client)
     {
-        $coinMarketDataCollection = collect(
-            $client->markets()
-        );
+        $coinMarketDataCollection = collect($client->markets());
 
         $coinModelCollection = Coin::whereIn(
             'name', $coinMarketDataCollection->pluck('name')->toArray()

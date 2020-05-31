@@ -8,6 +8,7 @@ use Spatie\DataTransferObject\DataTransferObject;
 
 final class CoinMarketData extends DataTransferObject
 {
+    public string $id;
     public string $name;
     public string $symbol;
     public string $icon;

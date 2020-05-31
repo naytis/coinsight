@@ -32,7 +32,6 @@ final class CoinGecko extends Aggregator
         return CoinMarketDataCollectionFactory::create($data);
     }
 
-
     public function coinMarketChart(string $id, $days): CoinHistoricalDataCollection
     {
         $data = $this->request("/coins/{$id}/market_chart", [

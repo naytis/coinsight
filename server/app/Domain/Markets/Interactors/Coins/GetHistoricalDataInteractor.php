@@ -25,9 +25,9 @@ final class GetHistoricalDataInteractor
         $coin = $this->coinService->getById($request->id);
 
         if ($request->days->is(ChartDays::MAX)) {
-            $historicalDataResponse = $this->client->coinHistoricalDataAllTime($coin->name);
+            $historicalDataResponse = $this->client->coinHistoricalDataAllTime($coin->coin_gecko_id);
         } else {
-            $historicalDataResponse = $this->client->coinHistoricalData($coin->name, $request->days->value);
+            $historicalDataResponse = $this->client->coinHistoricalData($coin->coin_gecko_id, $request->days->value);
         }
 
         $historicalData = collect($historicalDataResponse)->map(

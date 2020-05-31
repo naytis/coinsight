@@ -87,30 +87,31 @@ final class UpdateCoins extends Command
         );
     }
 
-    private function makeCoinRecord(CoinMarketData $coinOverview): array
+    private function makeCoinRecord(CoinMarketData $coinMarketData): array
     {
         try {
-            $iconUrl = $this->saveIcon($coinOverview);
+            $iconUrl = $this->saveIcon($coinMarketData);
         } catch (Exception $exception) {
-            $this->addError($coinOverview, $exception);
+            $this->addError($coinMarketData, $exception);
         }
 
         return [
-            'name' => $coinOverview->name,
-            'symbol' => $coinOverview->symbol,
+            'name' => $coinMarketData->name,
+            'symbol' => $coinMarketData->symbol,
             'icon' => $iconUrl ?? null,
+            'coin_gecko_id' => $coinMarketData->id,
             'created_at' => $now = Carbon::now(),
             'updated_at' => $now,
         ];
     }
 
-    private function saveIcon(CoinMarketData $coinOverview): string
+    private function saveIcon(CoinMarketData $coinMarketData): string
     {
-        $filename = Str::slug($coinOverview->name) . '.png';
+        $filename = Str::slug($coinMarketData->name) . '.png';
         $filePath = 'public/' . $filename;
 
         if (Storage::missing($filePath)) {
-            Storage::put($filePath, file_get_contents($coinOverview->icon));
+            Storage::put($filePath, file_get_contents($coinMarketData->icon));
         }
 
         return Storage::url($filename);

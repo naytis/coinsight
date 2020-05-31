@@ -7,7 +7,6 @@ namespace App\Coinfo;
 use App\Coinfo\Aggregators\CoinGecko;
 use App\Coinfo\Aggregators\Messari;
 use App\Coinfo\Enums\Interval;
-use App\Coinfo\Types\CoinHistoricalData;
 use App\Coinfo\Types\CoinMarketDataCollection;
 use App\Coinfo\Types\CoinProfile;
 use App\Coinfo\Types\CoinOHLCVCollection;
@@ -48,13 +47,13 @@ final class Client
         return $this->messari->assetProfile(Str::slug($currencyName));
     }
 
-    public function coinHistoricalData(string $currencyName, int $days): CoinHistoricalDataCollection {
-        return $this->coinGecko->coinMarketChart(Str::slug($currencyName), $days);
+    public function coinHistoricalData(string $coinGeckoId, int $days): CoinHistoricalDataCollection {
+        return $this->coinGecko->coinMarketChart($coinGeckoId, $days);
     }
 
-    public function coinHistoricalDataAllTime(string $currencyName): CoinHistoricalDataCollection
+    public function coinHistoricalDataAllTime(string $coinGeckoId): CoinHistoricalDataCollection
     {
-        return $this->coinGecko->coinMarketChart(Str::slug($currencyName), 'max');
+        return $this->coinGecko->coinMarketChart($coinGeckoId, 'max');
     }
 
     public function coinOHLCV(
