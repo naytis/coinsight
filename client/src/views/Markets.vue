@@ -1,12 +1,6 @@
 <template>
   <v-col>
-    <v-overlay absolute :value="isGlobalStatsLoading || isCoinsLoading">
-      <v-progress-circular
-        size="60"
-        indeterminate
-        color="primary"
-      ></v-progress-circular>
-    </v-overlay>
+    <spinner v-if="isGlobalStatsLoading || isCoinsLoading" />
     <v-row justify="space-around">
       <v-col
         cols="3"
@@ -93,12 +87,14 @@
 import {globalStats, coins} from '../api/markets';
 import Card from '../components/common/Card';
 import percentColorClass from '../mixins/percentColorClass';
+import Spinner from '../components/common/Spinner';
 
 export default {
   name: 'Markets',
 
   components: {
     Card,
+    Spinner,
   },
 
   mixins: [percentColorClass],

@@ -1,17 +1,8 @@
 <template>
   <v-col>
-    <v-overlay
-      absolute
-      :value="
-        isProfileLoading || isMarketDataLoading || isHistoricalDataLoading
-      "
-    >
-      <v-progress-circular
-        size="60"
-        indeterminate
-        color="primary"
-      ></v-progress-circular>
-    </v-overlay>
+    <spinner
+      v-if="isProfileLoading || isMarketDataLoading || isHistoricalDataLoading"
+    />
     <v-row>
       <v-col>
         <v-row v-if="!isProfileLoading">
@@ -156,6 +147,7 @@ import AddTransactionButton from '../components/coin/AddTransactionButton';
 import Card from '../components/common/Card';
 import Chart from '../components/common/Chart';
 import percentColorClass from '../mixins/percentColorClass';
+import Spinner from '../components/common/Spinner';
 
 export default {
   name: 'Coin',
@@ -164,6 +156,7 @@ export default {
     AddTransactionButton,
     Card,
     Chart,
+    Spinner,
   },
 
   mixins: [percentColorClass],

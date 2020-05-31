@@ -1,13 +1,7 @@
 <template>
   <v-row justify="center">
     <v-col cols="8" class="mt-4">
-      <v-overlay absolute :value="isArticleLoading">
-        <v-progress-circular
-          size="60"
-          indeterminate
-          color="primary"
-        ></v-progress-circular>
-      </v-overlay>
+      <spinner v-if="isArticleLoading" />
       <div v-if="!isArticleLoading">
         <div class="display-1">{{ article.title }}</div>
         <div class="text--disabled body-2">
@@ -28,10 +22,14 @@
 
 <script>
 import {getNewsArticleById} from '../api/news';
-import {dateFromNow} from '../filters';
+import Spinner from '../components/common/Spinner';
 
 export default {
   name: 'NewsArticle',
+
+  components: {
+    Spinner,
+  },
 
   data() {
     return {
@@ -58,10 +56,6 @@ export default {
   },
 
   filters: {
-    dateFromNow(date) {
-      return dateFromNow(date);
-    },
-
     convertNewLines(text) {
       console.log(text);
       return text.replace('\n', '<br />');

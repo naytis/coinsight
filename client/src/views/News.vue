@@ -1,14 +1,9 @@
 <template>
   <v-row justify="center">
-    <v-col cols="8" class="mt-4">
-      <v-overlay absolute :value="isNewsLoading">
-        <v-progress-circular
-          size="60"
-          indeterminate
-          color="primary"
-        ></v-progress-circular>
-      </v-overlay>
+    <v-col cols="8">
+      <spinner v-if="isNewsLoading" />
       <div v-if="!isNewsLoading">
+        <div class="display-2 my-4">News</div>
         <div v-for="(newsArticle, index) in news" :key="index">
           <router-link
             :to="{name: 'news-article', params: {id: newsArticle.id}}"
@@ -28,9 +23,14 @@
 
 <script>
 import {getNews} from '../api/news';
+import Spinner from '../components/common/Spinner';
 
 export default {
   name: 'News',
+
+  components: {
+    Spinner,
+  },
 
   data() {
     return {

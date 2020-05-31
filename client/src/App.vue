@@ -72,6 +72,8 @@
         <router-view />
       </v-container>
     </v-content>
+
+    <spinner v-if="isUserLoading" />
   </v-app>
 </template>
 
@@ -86,9 +88,14 @@ import {
   LOGOUT,
   REFRESH_ACCESS_TOKEN,
 } from './store/auth/types';
+import Spinner from './components/common/Spinner';
 
 export default {
   name: 'App',
+
+  components: {
+    Spinner,
+  },
 
   data() {
     return {
