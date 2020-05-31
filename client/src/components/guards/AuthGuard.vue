@@ -34,7 +34,7 @@ export default {
       });
     } else if (isLoggedIn && isAuthSectionRoute) {
       next({
-        name: 'home',
+        name: 'portfolios',
       });
     } else {
       next();

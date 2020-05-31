@@ -15,9 +15,9 @@
     <v-card>
       <v-card-title>Add transaction</v-card-title>
       <v-card-text>
-        <v-form>
+        <v-form v-model="isFormValid">
           <v-select
-            :items="portfolios"
+            :items="portfoliosAsArray"
             v-model="transaction.portfolio"
             item-text="name"
             item-value="id"
@@ -30,19 +30,19 @@
           />
           <v-text-field
             label="Price per coin"
-            v-model="transaction.price"
-            :value="transaction.price"
+            v-model="transaction.pricePerCoin"
+            :value="coinPrice"
             flat
             suffix="$"
-            :rules="[rules.required, rules.greaterThanOrEquals0]"
+            :rules="[rules.greaterThanOrEquals0]"
           />
           <v-text-field
             label="Quantity"
             v-model="transaction.quantity"
             :value="transaction.quantity"
-            flat
             :suffix="coinSymbol.toUpperCase()"
-            :rules="[rules.required, rules.greaterThanOrEquals0]"
+            flat
+            :rules="[rules.greaterThan0]"
           />
           <v-text-field
             label="Fee"
@@ -50,10 +50,9 @@
             :value="transaction.fee"
             suffix="$"
             flat
-            :rules="[rules.required, rules.greaterThanOrEquals0]"
+            :rules="[rules.greaterThanOrEquals0]"
           />
           <v-menu
-            v-model="datePickerMenu"
             min-width="0"
             transition="scale-transition"
             offset-y
@@ -61,25 +60,53 @@
           >
             <template v-slot:activator="{on}">
               <v-text-field
-                v-model="transaction.datetime"
+                v-model="formattedTransactionDatetime"
                 label="Datetime"
                 append-icon="mdi-calendar"
+                readonly
                 v-on="on"
-              ></v-text-field>
+              />
             </template>
-            <v-date-picker v-model="transaction.datetime" no-title scrollable />
+            <v-date-picker
+              v-model="transaction.datetime"
+              :show-current="false"
+              no-title
+              scrollable
+            />
           </v-menu>
         </v-form>
-        <v-btn class="mt-4" block color="primary" @click="saveTransaction">
-          Save transaction
-        </v-btn>
+        <div class="d-flex justify-end">
+          <v-btn
+            class="mt-4 mr-2"
+            color="primary"
+            outlined
+            @click="addTransactionDialog = false"
+          >
+            Cancel
+          </v-btn>
+          <v-btn
+            class="mt-4 ml-2"
+            color="primary"
+            :disabled="!isFormValid"
+            @click="onAddTransaction"
+          >
+            Save
+          </v-btn>
+        </div>
       </v-card-text>
     </v-card>
   </v-dialog>
 </template>
 
 <script>
-import {addTransaction, getUserPortfolios} from '../../api/portfolio';
+import {mapActions, mapGetters} from 'vuex';
+import {
+  CREATE_TRANSACTION,
+  FETCH_PORTFOLIOS,
+  GET_PORTFOLIOS,
+  IS_PORTFOLIOS_FETCHED,
+} from '../../store/portfolio/types';
+import {format, parseISO} from 'date-fns';
 
 export default {
   name: 'AddTransactionButton',
@@ -99,52 +126,81 @@ export default {
     return {
       addTransactionDialog: false,
       datePickerMenu: false,
-      portfolios: [],
+      isFormValid: false,
       rules: {
         required: v => !!v || 'This field is required',
         greaterThanOrEquals0: v =>
           v >= 0 || 'Value must be greater than or equals to 0',
+        greaterThan0: v => v > 0 || 'Value must be greater than 0',
       },
       transactionTypes: ['buy', 'sell'],
       transaction: {
         portfolio: {},
-        price: this.coinPrice,
+        coinId: this.$route.params.id,
+        pricePerCoin: this.coinPrice,
         quantity: 0,
         fee: 0,
         datetime: new Date().toISOString().slice(0, 10),
         type: 'buy',
       },
+      portfoliosPage: 1,
+      portfoliosPerPage: 20,
     };
   },
 
   methods: {
+    ...mapActions('portfolio', {
+      fetchPortfolios: FETCH_PORTFOLIOS,
+      createTransaction: CREATE_TRANSACTION,
+    }),
+
     async getUserPortfolios() {
+      if (this.portfoliosAsArray.length !== 0 && this.isPortfoliosFetched) {
+        this.transaction.portfolio = this.portfoliosAsArray[0];
+        return;
+      }
+
       try {
-        let result = await getUserPortfolios();
-        this.portfolios = result.data.portfolios;
-        this.transaction.portfolio = this.portfolios[0];
+        await this.fetchPortfolios({
+          page: this.portfoliosPage,
+          perPage: this.portfoliosPerPage,
+        });
+        this.portfoliosPage++;
+        this.transaction.portfolio = this.portfoliosAsArray[0];
       } catch (e) {
         alert(e);
       }
     },
 
-    saveTransaction() {
+    onAddTransaction() {
       try {
-        addTransaction({
-          portfolioId: this.transaction.portfolio.id,
-          coinId: this.$route.params.id,
-          type: this.transaction.type,
-          pricePerCoin: this.transaction.price,
-          quantity: this.transaction.quantity,
-          fee: this.transaction.fee,
-          datetime: this.transaction.datetime,
-        });
+        this.createTransaction(this.transaction);
       } catch (e) {
         alert(e);
       } finally {
         alert('Transaction saved');
       }
       this.addTransactionDialog = false;
+    },
+  },
+
+  computed: {
+    ...mapGetters('portfolio', {
+      portfolios: GET_PORTFOLIOS,
+      isPortfoliosFetched: IS_PORTFOLIOS_FETCHED,
+    }),
+
+    formattedTransactionDatetime: {
+      get() {
+        return format(parseISO(this.transaction.datetime), 'MMMM dd, yyyy');
+      },
+      set(value) {
+        this.transaction.datetime = value;
+      },
+    },
+
+    portfoliosAsArray() {
+      return Object.values(this.portfolios);
     },
   },
 };

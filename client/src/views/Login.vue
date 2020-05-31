@@ -84,7 +84,7 @@ export default {
           if (this.$route.query.redirect) {
             await this.$router.push({path: this.$route.query.redirect});
           } else {
-            await this.$router.push({name: 'home'});
+            await this.$router.push({name: 'portfolios'});
           }
         } catch (e) {
           alert(e);

@@ -1,0 +1,46 @@
+export const SET_PORTFOLIOS = 'setPortfolios';
+export const SET_PORTFOLIO = 'setPortfolio';
+export const SET_CURRENT_PORTFOLIO_ID = 'setCurrentPortfolioId';
+export const SET_REPORT_SKELETON = 'setReportSkeleton';
+export const UNSET_REPORT = 'unsetReport';
+export const UNSET_PORTFOLIO = 'unsetPortfolio';
+export const SET_TOTAL_PORTFOLIOS = 'setTotalPortfolios';
+export const INC_TOTAL_PORTFOLIOS = 'incTotalPortfolios';
+export const DEC_TOTAL_PORTFOLIOS = 'decTotalPortfolios';
+export const SET_TOTAL_TRANSACTIONS = 'setTotalTransactions';
+export const SET_TOTAL_ASSETS = 'setTotalAssets';
+export const SET_IS_PORTFOLIOS_LOADING = 'setIsPortfoliosLoading';
+export const RESET_IS_PORTFOLIOS_LOADING = 'resetIsPortfoliosLoading';
+export const SET_IS_PORTFOLIOS_FETCHED = 'setIsPortfoliosFetched';
+export const SET_IS_REPORT_LOADING = 'setIsReportLoading';
+export const RESET_IS_REPORT_LOADING = 'resetIsReportLoading';
+export const SET_IS_ASSETS_LOADING = 'setIsAssetsLoading';
+export const RESET_IS_ASSETS_LOADING = 'resetIsAssetsLoading';
+export const SET_IS_TRANSACTIONS_LOADING = 'setIsTransactionsLoading';
+export const RESET_IS_TRANSACTIONS_LOADING = 'resetIsTransactionsLoading';
+export const SET_OVERVIEW = 'setOverview';
+export const SET_CHART = 'setChart';
+export const SET_ASSETS = 'setAssets';
+export const SET_TRANSACTIONS = 'setTransactions';
+
+export const FETCH_PORTFOLIOS = 'fetchPortfolios';
+export const FETCH_REPORT_BY_PORTFOLIO_ID = 'fetchReportByPortfolioId';
+export const FETCH_ASSETS_BY_PORTFOLIO_ID = 'fetchAssetsByPortfolioId';
+export const FETCH_TRANSACTIONS_BY_PORTFOLIO_ID =
+  'fetchTransactionsByPortfolioId';
+export const CREATE_PORTFOLIO = 'createPortfolio';
+export const UPDATE_PORTFOLIO = 'updatePortfolio';
+export const DELETE_PORTFOLIO = 'deletePortfolio';
+export const CREATE_TRANSACTION = 'createTransaction';
+export const UPDATE_TRANSACTION = 'updateTransaction';
+export const DELETE_TRANSACTION = 'deleteTransaction';
+
+export const IS_PORTFOLIOS_LOADING = 'isPortfoliosLoading';
+export const IS_REPORT_LOADING = 'isReportLoading';
+export const IS_ASSETS_LOADING = 'isAssetsLoading';
+export const IS_TRANSACTIONS_LOADING = 'isTransactionsLoading';
+export const GET_PORTFOLIOS = 'getPortfolios';
+export const GET_CURRENT_REPORT = 'getCurrentReport';
+export const GET_CURRENT_PORTFOLIO_ID = 'getCurrentPortfolioId';
+export const IS_PORTFOLIOS_FETCHED = 'isPortfoliosFetched';
+export const HAS_CURRENT_REPORT = 'hasCurrentReport';

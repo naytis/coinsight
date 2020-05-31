@@ -1,28 +1,46 @@
 import Vue from 'vue';
 import VueRouter from 'vue-router';
 import Login from '../views/Login';
-import AuthGuard from '../components/common/AuthGuard';
+import AuthGuard from '../components/guards/AuthGuard';
 import Register from '../views/Register';
 import Markets from '../views/Markets';
 import Coin from '../views/Coin';
 import Portfolio from '../views/Portfolio';
 import News from '../views/News';
 import NewsArticle from '../views/NewsArticle';
+import CreatePortfolio from '../views/CreatePortfolio';
+import PortfolioGuard from '../components/guards/PortfolioGuard';
 
 Vue.use(VueRouter);
 
 const routes = [
   {
     path: '/',
-    redirect: 'portfolio',
+    redirect: 'portfolios',
   },
   {
-    path: '/portfolio',
-    name: 'portfolio',
-    component: Portfolio,
-    meta: {
-      requiresAuth: true,
-    },
+    path: '/portfolios',
+    name: 'portfolios',
+    component: PortfolioGuard,
+    children: [
+      {
+        path: '/portfolio/create',
+        name: 'create-portfolio',
+        component: CreatePortfolio,
+        meta: {
+          requiresAuth: true,
+        },
+      },
+      {
+        path: '/portfolios/:id',
+        name: 'portfolio-page',
+        component: Portfolio,
+        props: true,
+        meta: {
+          requiresAuth: true,
+        },
+      },
+    ],
   },
   {
     path: '/markets',
@@ -43,9 +61,6 @@ const routes = [
     path: '/coins/:id',
     name: 'coin',
     component: Coin,
-    meta: {
-      requiresAuth: true,
-    },
   },
   {
     path: '/register',
