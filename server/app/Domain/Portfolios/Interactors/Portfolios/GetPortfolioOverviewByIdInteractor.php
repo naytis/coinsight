@@ -37,8 +37,8 @@ final class GetPortfolioOverviewByIdInteractor
             return new GetPortfolioOverviewByIdResponse([
                 'overview' =>  new Overview([
                     'portfolio' => Portfolio::fromModel($portfolio),
-                    'totalValue' => 0,
-                    'totalValueChange' => 0,
+                    'totalValue' => null,
+                    'totalValueChange' => null,
                 ]),
             ]);
         }

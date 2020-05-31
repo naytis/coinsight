@@ -9,6 +9,6 @@ use Spatie\DataTransferObject\DataTransferObject;
 final class Overview extends DataTransferObject
 {
     public Portfolio $portfolio;
-    public float $totalValue;
-    public float $totalValueChange;
+    public ?float $totalValue;
+    public ?float $totalValueChange;
 }
