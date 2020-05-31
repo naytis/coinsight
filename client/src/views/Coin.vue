@@ -158,6 +158,8 @@ import Card from '../components/common/Card';
 import Chart from '../components/common/Chart';
 import percentColorClass from '../mixins/percentColorClass';
 import Spinner from '../components/common/Spinner';
+import {mapActions} from 'vuex';
+import {SHOW_ERROR_MESSAGE} from '../store/notification/types';
 
 export default {
   name: 'Coin',
@@ -206,13 +208,17 @@ export default {
   },
 
   methods: {
+    ...mapActions('notification', {
+      showErrorMessage: SHOW_ERROR_MESSAGE,
+    }),
+
     async fetchCoinProfile() {
       this.isProfileLoading = true;
       try {
         let result = await profile(this.$route.params.id);
         this.profile = result.data;
       } catch (e) {
-        alert(e);
+        this.showErrorMessage(e);
       }
       this.isProfileLoading = false;
     },
@@ -223,7 +229,7 @@ export default {
         let result = await marketData(this.$route.params.id);
         this.marketData = result.data;
       } catch (e) {
-        alert(e);
+        this.showErrorMessage(e);
       }
       this.isMarketDataLoading = false;
     },
@@ -236,7 +242,7 @@ export default {
         });
         this.historicalData = result.data.historicalData;
       } catch (e) {
-        alert(e);
+        this.showErrorMessage(e);
       }
       this.isHistoricalDataLoading = false;
     },

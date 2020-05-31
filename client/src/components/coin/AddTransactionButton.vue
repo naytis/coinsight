@@ -88,7 +88,7 @@
             class="mt-4 ml-2"
             color="primary"
             :disabled="!isFormValid"
-            @click="onAddTransaction"
+            @click="onCreateTransaction"
           >
             Save
           </v-btn>
@@ -108,6 +108,10 @@ import {
 } from '../../store/portfolio/types';
 import {format, parseISO} from 'date-fns';
 import rules from '../../mixins/rules';
+import {
+  SHOW_ERROR_MESSAGE,
+  SHOW_SUCCESS_MESSAGE,
+} from '../../store/notification/types';
 
 export default {
   name: 'AddTransactionButton',
@@ -151,6 +155,11 @@ export default {
       createTransaction: CREATE_TRANSACTION,
     }),
 
+    ...mapActions('notification', {
+      showErrorMessage: SHOW_ERROR_MESSAGE,
+      showSuccessMessage: SHOW_SUCCESS_MESSAGE,
+    }),
+
     async getUserPortfolios() {
       if (this.portfoliosAsArray.length !== 0 && this.isPortfoliosFetched) {
         this.transaction.portfolio = this.portfoliosAsArray[0];
@@ -165,19 +174,18 @@ export default {
         this.portfoliosPage++;
         this.transaction.portfolio = this.portfoliosAsArray[0];
       } catch (e) {
-        alert(e);
+        this.showErrorMessage(e);
       }
     },
 
-    onAddTransaction() {
+    onCreateTransaction() {
+      this.addTransactionDialog = false;
       try {
         this.createTransaction(this.transaction);
+        this.showSuccessMessage('Transaction saved');
       } catch (e) {
-        alert(e);
-      } finally {
-        alert('Transaction saved');
+        this.showErrorMessage(e);
       }
-      this.addTransactionDialog = false;
     },
   },
 

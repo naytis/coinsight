@@ -84,6 +84,10 @@
 import {mapActions} from 'vuex';
 import {REGISTER} from '../store/auth/types';
 import rules from '../mixins/rules';
+import {
+  SHOW_ERROR_MESSAGE,
+  SHOW_SUCCESS_MESSAGE,
+} from '../store/notification/types';
 
 export default {
   name: 'Register',
@@ -118,7 +122,7 @@ export default {
             password: this.input.password,
           });
 
-          alert('You are successfully registered.');
+        this.showSuccessMessage('You are successfully registered.');
 
           if (this.$route.query.redirect) {
             await this.$router.push({
@@ -148,6 +152,11 @@ export default {
 
     ...mapActions('auth', {
       register: REGISTER,
+    }),
+
+    ...mapActions('notification', {
+      showSuccessMessage: SHOW_SUCCESS_MESSAGE,
+      showErrorMessage: SHOW_ERROR_MESSAGE,
     }),
   },
 };

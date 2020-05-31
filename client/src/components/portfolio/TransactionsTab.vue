@@ -187,6 +187,10 @@ import {
 import percentColorClass from '../../mixins/percentColorClass';
 import {format, parseISO} from 'date-fns';
 import rules from '../../mixins/rules';
+import {
+  SHOW_ERROR_MESSAGE,
+  SHOW_SUCCESS_MESSAGE,
+} from '../../store/notification/types';
 
 export default {
   name: 'TransactionsTab',
@@ -235,6 +239,11 @@ export default {
       deleteTransaction: DELETE_TRANSACTION,
     }),
 
+    ...mapActions('notification', {
+      showErrorMessage: SHOW_ERROR_MESSAGE,
+      showSuccessMessage: SHOW_SUCCESS_MESSAGE,
+    }),
+
     onOpenEditTransactionDialog(selectedTransaction) {
       this.transaction = Object.assign({}, selectedTransaction);
       this.transaction.portfolio = this.currentReport.overview.portfolio;
@@ -250,8 +259,9 @@ export default {
       this.editTransactionDialog = false;
       try {
         this.updateTransaction(this.transaction);
+        this.showSuccessMessage('Transaction updated');
       } catch (e) {
-        alert(e);
+        this.showErrorMessage(e);
       }
     },
 
@@ -259,8 +269,9 @@ export default {
       this.editTransactionDialog = false;
       try {
         this.deleteTransaction(this.transaction.id);
+        this.showSuccessMessage('Transaction deleted');
       } catch (e) {
-        alert(e);
+        this.showErrorMessage(e);
       }
     },
   },

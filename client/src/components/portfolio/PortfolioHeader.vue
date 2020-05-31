@@ -118,6 +118,10 @@ import {
   GET_CURRENT_PORTFOLIO_ID,
 } from '../../store/portfolio/types';
 import PortfolioDialog from './PortfolioDialog';
+import {
+  SHOW_ERROR_MESSAGE,
+  SHOW_SUCCESS_MESSAGE,
+} from '../../store/notification/types';
 
 export default {
   name: 'PortfolioHeader',
@@ -142,6 +146,11 @@ export default {
       createPortfolio: CREATE_PORTFOLIO,
       updatePortfolio: UPDATE_PORTFOLIO,
       deletePortfolio: DELETE_PORTFOLIO,
+    }),
+
+    ...mapActions('notification', {
+      showErrorMessage: SHOW_ERROR_MESSAGE,
+      showSuccessMessage: SHOW_SUCCESS_MESSAGE,
     }),
 
     onChangeCurrentReport(portfolioId) {
@@ -169,14 +178,16 @@ export default {
       try {
         if (this.actionType === 'create') {
           await this.createPortfolio({name: this.name});
+          this.showSuccessMessage('Portfolio created');
         } else {
           await this.updatePortfolio({
             id: this.currentReport.overview.portfolio.id,
             name: this.name,
           });
+          this.showSuccessMessage('Portfolio updated');
         }
       } catch (e) {
-        alert(e);
+        this.showErrorMessage(e);
       }
 
       this.name = '';
@@ -186,6 +197,7 @@ export default {
       this.deletePortfolioDialog = false;
       try {
         await this.deletePortfolio(this.currentReport.overview.portfolio.id);
+        this.showSuccessMessage('Portfolio deleted');
 
         if (this.currentPortfolioId === -1) {
           await this.$router.replace({name: 'create-portfolio'});
@@ -197,7 +209,7 @@ export default {
           () => {},
         );
       } catch (e) {
-        alert(e);
+        this.showErrorMessage(e);
       }
     },
   },

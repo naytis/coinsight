@@ -25,6 +25,7 @@ import {
 } from '../store/portfolio/types';
 import Spinner from '../components/common/Spinner';
 import PortfolioDialog from '../components/portfolio/PortfolioDialog';
+import {SHOW_ERROR_MESSAGE} from '../store/notification/types';
 
 export default {
   name: 'CreatePortfolio',
@@ -46,17 +47,22 @@ export default {
       createPortfolio: CREATE_PORTFOLIO,
     }),
 
+    ...mapActions('notification', {
+      showErrorMessage: SHOW_ERROR_MESSAGE,
+    }),
+
     async onCreatePortfolio() {
       this.portfolioDialog = false;
 
       try {
         await this.createPortfolio({name: this.name});
+        this.showSuccessMessage('Portfolio created');
         await this.$router.replace({
           name: 'portfolio-page',
           params: {id: this.currentPortfolioId},
         });
       } catch (e) {
-        alert(e);
+        this.showErrorMessage(e);
       }
     },
   },

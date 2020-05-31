@@ -32,6 +32,7 @@ import {
   IS_TRANSACTIONS_LOADING,
   SET_CURRENT_PORTFOLIO_ID,
 } from '../store/portfolio/types';
+import {SHOW_ERROR_MESSAGE} from '../store/notification/types';
 
 export default {
   name: 'Portfolio',
@@ -72,6 +73,10 @@ export default {
       fetchReportByPortfolioId: FETCH_REPORT_BY_PORTFOLIO_ID,
     }),
 
+    ...mapActions('notification', {
+      showErrorMessage: SHOW_ERROR_MESSAGE,
+    }),
+
     ...mapMutations('portfolio', {
       setPortfolioId: SET_CURRENT_PORTFOLIO_ID,
     }),
@@ -86,7 +91,7 @@ export default {
           portfolioId: this.id,
         });
       } catch (e) {
-        alert(e);
+        this.showErrorMessage(e);
       }
     },
   },

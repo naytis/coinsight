@@ -58,6 +58,7 @@
 import {LOGIN} from '../store/auth/types';
 import {mapActions} from 'vuex';
 import rules from '../mixins/rules';
+import {SHOW_ERROR_MESSAGE} from '../store/notification/types';
 
 export default {
   name: 'Login',
@@ -100,6 +101,10 @@ export default {
 
     ...mapActions('auth', {
       login: LOGIN,
+    }),
+
+    ...mapActions('notification', {
+      showErrorMessage: SHOW_ERROR_MESSAGE,
     }),
   },
 };

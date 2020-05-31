@@ -89,6 +89,8 @@ import {globalStats, coins} from '../api/markets';
 import Card from '../components/common/Card';
 import percentColorClass from '../mixins/percentColorClass';
 import Spinner from '../components/common/Spinner';
+import {mapActions} from 'vuex';
+import {SHOW_ERROR_MESSAGE} from '../store/notification/types';
 
 export default {
   name: 'Markets',
@@ -132,13 +134,17 @@ export default {
   },
 
   methods: {
+    ...mapActions('notification', {
+      showErrorMessage: SHOW_ERROR_MESSAGE,
+    }),
+
     async fetchGlobalStats() {
       this.isGlobalStatsLoading = true;
       try {
         let result = await globalStats();
         this.globalStats = result.data;
       } catch (e) {
-        alert(e);
+        this.showErrorMessage(e);
       }
       this.isGlobalStatsLoading = false;
     },
@@ -150,7 +156,7 @@ export default {
         this.coins = result.data.coins;
         this.coinsTotal = result.meta.total;
       } catch (e) {
-        alert(e);
+        this.showErrorMessage(e);
       }
       this.isCoinsLoading = false;
     },

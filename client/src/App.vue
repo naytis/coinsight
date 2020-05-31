@@ -74,6 +74,8 @@
     </v-content>
 
     <spinner v-if="isUserLoading" />
+
+    <notification />
   </v-app>
 </template>
 
@@ -88,12 +90,14 @@ import {
   LOGOUT,
   REFRESH_ACCESS_TOKEN,
 } from './store/auth/types';
+import Notification from './components/common/Notification';
 import Spinner from './components/common/Spinner';
 
 export default {
   name: 'App',
 
   components: {
+    Notification,
     Spinner,
   },
 

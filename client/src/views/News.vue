@@ -24,6 +24,8 @@
 <script>
 import {getNews} from '../api/news';
 import Spinner from '../components/common/Spinner';
+import {mapActions} from 'vuex';
+import {SHOW_ERROR_MESSAGE} from '../store/notification/types';
 
 export default {
   name: 'News',
@@ -44,13 +46,17 @@ export default {
   },
 
   methods: {
+    ...mapActions('notification', {
+      showErrorMessage: SHOW_ERROR_MESSAGE,
+    }),
+
     async getNews() {
       this.isNewsLoading = true;
       try {
         let result = await getNews();
         this.news = result.data.news;
       } catch (e) {
-        alert(e);
+        this.showErrorMessage(e);
       }
       this.isNewsLoading = false;
     },

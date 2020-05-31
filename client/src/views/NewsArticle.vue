@@ -23,6 +23,8 @@
 <script>
 import {getNewsArticleById} from '../api/news';
 import Spinner from '../components/common/Spinner';
+import {SHOW_ERROR_MESSAGE} from '../store/notification/types';
+import {mapActions} from 'vuex';
 
 export default {
   name: 'NewsArticle',
@@ -43,13 +45,17 @@ export default {
   },
 
   methods: {
+    ...mapActions('notification', {
+      showErrorMessage: SHOW_ERROR_MESSAGE,
+    }),
+
     async getNewsArticle() {
       this.isArticleLoading = true;
       try {
         let result = await getNewsArticleById(this.$route.params.id);
         this.article = result.data;
       } catch (e) {
-        alert(e);
+        this.showErrorMessage(e);
       }
       this.isArticleLoading = false;
     },
