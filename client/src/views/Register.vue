@@ -1,16 +1,14 @@
 <template>
-  <v-row align="center" justify="center">
+  <v-row align="center" justify="center" class="fill-height">
     <v-col cols="5">
-      <h1 class="pa-4">Welcome to coinsight</h1>
+      <h1 class="pa-4">Welcome to coinsight!</h1>
       <v-form autocomplete="off" v-model="isFormValid">
         <v-text-field
           @keyup.enter="onRegister"
           label="Email"
-          name="email"
           type="email"
           v-model="input.email"
           outlined
-          dark
           flat
           :disabled="isPending"
           :rules="[rules.required, rules.email]"
@@ -19,21 +17,16 @@
         <v-text-field
           @keyup.enter="onRegister"
           label="Username"
-          name="username"
-          type="text"
           v-model="input.username"
           outlined
-          dark
           flat
           :disabled="isPending"
           :rules="[rules.required, rules.username]"
         />
 
         <v-text-field
-          id="password"
           @keyup.enter="onRegister"
           label="Password"
-          name="password"
           type="password"
           v-model="input.password"
           outlined
@@ -42,10 +35,8 @@
         />
 
         <v-text-field
-          id="password"
           @keyup.enter="onRegister"
           label="Repeat password"
-          name="repeated"
           type="password"
           v-model="input.repeated"
           outlined
@@ -56,7 +47,6 @@
         <v-btn
           @click="onRegister"
           block
-          dark
           elevation="0"
           :disabled="!isFormValid"
           :loading="isPending"
@@ -106,48 +96,36 @@ export default {
       isFormValid: false,
     };
   },
+
   methods: {
     async onRegister() {
-      if (
-        this.input.email !== '' &&
-        this.input.username !== '' &&
-        this.input.password !== ''
-      ) {
-        this.isPending = true;
+      if (!this.isFormValid) {
+        return;
+      }
+      this.isPending = true;
 
-        try {
-          await this.register({
-            email: this.input.email,
-            username: this.input.username,
-            password: this.input.password,
-          });
+      try {
+        await this.register({
+          email: this.input.email,
+          username: this.input.username,
+          password: this.input.password,
+        });
 
         this.showSuccessMessage('You are successfully registered.');
 
-          if (this.$route.query.redirect) {
-            await this.$router.push({
-              name: 'login',
-              query: {redirect: this.$route.query.redirect},
-            });
-          } else {
-            await this.$router.push({name: 'login'});
-          }
-        } catch (e) {
-          alert(e);
+        if (this.$route.query.redirect) {
+          await this.$router.push({
+            name: 'login',
+            query: {redirect: this.$route.query.redirect},
+          });
+        } else {
+          await this.$router.push({name: 'login'});
         }
-
-        this.isPending = false;
+      } catch (e) {
+        this.showErrorMessage(e);
       }
-    },
 
-    isEmailValid(email) {
-      return /^\w+@[a-zA-Z_]+?\.[a-zA-Z]{2,3}$/.test(email);
-    },
-
-    isUsernameValid(username) {
-      return /^(?=[a-zA-Z0-9._]{3,20}$)(?!.*[_.]{2})[^_.].*[^_.]$/.test(
-        username,
-      );
+      this.isPending = false;
     },
 
     ...mapActions('auth', {
