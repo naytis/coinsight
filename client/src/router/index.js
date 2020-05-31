@@ -10,6 +10,7 @@ import News from '../views/News';
 import NewsArticle from '../views/NewsArticle';
 import CreatePortfolio from '../views/CreatePortfolio';
 import PortfolioGuard from '../components/guards/PortfolioGuard';
+import PageNotFound from '../views/PageNotFound';
 
 Vue.use(VueRouter);
 
@@ -77,6 +78,10 @@ const routes = [
     meta: {
       handleAuth: true,
     },
+  },
+  {
+    path: '*',
+    component: PageNotFound,
   },
 ];
 
