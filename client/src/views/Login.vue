@@ -13,7 +13,7 @@
           dark
           flat
           :disabled="isPending"
-          :rules="[v => !!v || 'Username is required']"
+          :rules="[rules.required]"
         />
 
         <v-text-field
@@ -25,7 +25,7 @@
           v-model="input.password"
           outlined
           :disabled="isPending"
-          :rules="[v => !!v || 'Password is required']"
+          :rules="[rules.required]"
         />
         <v-btn
           @click="onLogin"
@@ -57,9 +57,13 @@
 <script>
 import {LOGIN} from '../store/auth/types';
 import {mapActions} from 'vuex';
+import rules from '../mixins/rules';
 
 export default {
   name: 'Login',
+
+  mixins: [rules],
+
   data() {
     return {
       isPending: false,

@@ -9,7 +9,7 @@
             v-model="nameInput"
             @keyup.enter="submit"
             flat
-            :rules="[v => !!v || 'Name is required']"
+            :rules="[rules.required]"
           />
         </v-form>
         <v-btn
@@ -27,8 +27,12 @@
 </template>
 
 <script>
+import rules from '../../mixins/rules';
+
 export default {
   name: 'PortfolioDialog',
+
+  mixins: [rules],
 
   props: {
     show: {

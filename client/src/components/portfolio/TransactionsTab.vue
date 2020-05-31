@@ -186,11 +186,12 @@ import {
 } from '../../store/portfolio/types';
 import percentColorClass from '../../mixins/percentColorClass';
 import {format, parseISO} from 'date-fns';
+import rules from '../../mixins/rules';
 
 export default {
   name: 'TransactionsTab',
 
-  mixins: [percentColorClass],
+  mixins: [percentColorClass, rules],
 
   data() {
     return {
@@ -209,12 +210,6 @@ export default {
       editTransactionDialog: false,
       deleteTransactionDialog: false,
       isFormValid: false,
-      rules: {
-        required: v => !!v || 'This field is required',
-        greaterThanOrEquals0: v =>
-          v >= 0 || 'Value must be greater than or equals to 0',
-        greaterThan0: v => v > 0 || 'Value must be greater than 0',
-      },
       transactionTypes: ['buy', 'sell'],
       transaction: {
         id: null,

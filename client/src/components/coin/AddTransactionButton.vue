@@ -107,9 +107,12 @@ import {
   IS_PORTFOLIOS_FETCHED,
 } from '../../store/portfolio/types';
 import {format, parseISO} from 'date-fns';
+import rules from '../../mixins/rules';
 
 export default {
   name: 'AddTransactionButton',
+
+  mixins: [rules],
 
   props: {
     coinPrice: {
@@ -127,12 +130,6 @@ export default {
       addTransactionDialog: false,
       datePickerMenu: false,
       isFormValid: false,
-      rules: {
-        required: v => !!v || 'This field is required',
-        greaterThanOrEquals0: v =>
-          v >= 0 || 'Value must be greater than or equals to 0',
-        greaterThan0: v => v > 0 || 'Value must be greater than 0',
-      },
       transactionTypes: ['buy', 'sell'],
       transaction: {
         portfolio: {},

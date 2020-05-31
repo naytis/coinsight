@@ -13,7 +13,7 @@
           dark
           flat
           :disabled="isPending"
-          :rules="emailRules"
+          :rules="[rules.required, rules.email]"
         />
 
         <v-text-field
@@ -26,7 +26,7 @@
           dark
           flat
           :disabled="isPending"
-          :rules="usernameRules"
+          :rules="[rules.required, rules.username]"
         />
 
         <v-text-field
@@ -38,7 +38,7 @@
           v-model="input.password"
           outlined
           :disabled="isPending"
-          :rules="passwordRules"
+          :rules="[rules.required, rules.password]"
         />
 
         <v-text-field
@@ -50,7 +50,7 @@
           v-model="input.repeated"
           outlined
           :disabled="isPending"
-          :rules="repeatedRules"
+          :rules="[rules.required, rules.repeated]"
         />
 
         <v-btn
@@ -83,9 +83,13 @@
 <script>
 import {mapActions} from 'vuex';
 import {REGISTER} from '../store/auth/types';
+import rules from '../mixins/rules';
 
 export default {
   name: 'Register',
+
+  mixins: [rules],
+
   data() {
     return {
       isPending: false,
@@ -96,25 +100,6 @@ export default {
         repeated: '',
       },
       isFormValid: false,
-      emailRules: [
-        v => !!v || 'E-mail is required',
-        v => this.isEmailValid(v) || 'E-mail must be valid',
-      ],
-      usernameRules: [
-        v => !!v || 'Username is required',
-        v =>
-          (v && v.length >= 3 && this.isUsernameValid(v)) ||
-          'Enter the correct information',
-      ],
-      passwordRules: [
-        v => !!v || 'Password is required',
-        v =>
-          v.length >= 8 || 'Password must be equal or more than 8 characters',
-      ],
-      repeatedRules: [
-        v => !!v || 'Repeated password is required',
-        v => v === this.input.password || 'Passwords should match',
-      ],
     };
   },
   methods: {
