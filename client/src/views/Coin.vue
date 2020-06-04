@@ -1,70 +1,12 @@
 <template>
   <v-col>
     <spinner
-      v-if="isProfileLoading || isMarketDataLoading || isHistoricalDataLoading"
+      v-if="isProfileLoading || isLatestLoading || isHistoricalLoading"
     />
-    <v-row>
-      <v-col>
-        <v-row v-if="!isProfileLoading">
-          <v-col class="py-0">
-            <div class="d-flex align-center">
-              <div>
-                <v-img :src="profile.icon" width="4em" height="4em" />
-              </div>
-              <div class="ml-3">
-                <div class="headline">
-                  {{ profile.name }} ({{ profile.symbol.toUpperCase() }})
-                </div>
-                <div class="muted">{{ profile.tagline }}</div>
-              </div>
-            </div>
-          </v-col>
-          <v-col class="py-0" cols="5" align-self="center">
-            <add-transaction-button
-              v-if="!isMarketDataLoading"
-              :coin-price="marketData.price"
-              :coin-symbol="profile.symbol"
-            />
-          </v-col>
-        </v-row>
-      </v-col>
-      <v-col
-        v-if="!isMarketDataLoading"
-        class="d-flex align-center justify-space-between"
-      >
-        <div class="price">
-          {{ marketData.price | formatMarketValue }}
-        </div>
-        <div
-          class="d-flex justify-center flex-column"
-          v-for="(priceChange, index) in priceChanges"
-          :key="index"
-        >
-          <div class="text-center">{{ priceChange.title }}</div>
-          <div :class="percentColorClass(priceChange.value)">
-            {{ priceChange.value | formatPercent }}
-          </div>
-        </div>
-      </v-col>
-    </v-row>
-    <v-row class="mt-4" v-if="!isMarketDataLoading && !isProfileLoading">
-      <v-col
-        cols="3"
-        class="text-center"
-        v-for="(marketDataItem, index) in marketDataCards"
-        :key="index"
-      >
-        <card
-          :title="marketDataItem.title"
-          :is-data-loading="isMarketDataLoading"
-          :value="marketDataItem.value"
-          :filter="marketDataItem.filter"
-          :percent="marketDataItem.percentChange"
-          values-typography-class="subtitle-1"
-        />
-      </v-col>
-    </v-row>
-    <v-row v-if="!isHistoricalDataLoading" justify="end" class="mt-4 px-3">
+    <div>
+      <coin-header />
+    </div>
+    <v-row v-if="!isHistoricalLoading" justify="end" class="mt-4 px-3">
       <v-btn
         class="mx-1"
         :input-value="period === value"
@@ -77,134 +19,89 @@
         {{ value }}
       </v-btn>
     </v-row>
-    <v-row>
-      <v-col v-if="!isHistoricalDataLoading">
-        <chart
-          :line-items="chartData.line"
-          line-label="Price"
-          :columns-items="chartData.columns"
-          columns-label="Volume"
-        />
-      </v-col>
+    <v-row v-if="!isHistoricalLoading">
+      <chart
+        :line-items="chartData.line"
+        line-label="Price"
+        :columns-items="chartData.columns"
+        columns-label="Volume"
+      />
     </v-row>
     <v-row v-if="!isProfileLoading">
-      <v-col cols="7">
-        <h2>About {{ profile.name }}</h2>
-        <p class="mt-2">{{ profile.description }}</p>
-        <div>
-          <h2>Links</h2>
-          <div class="d-flex flex-wrap space-between pt-3">
-            <v-btn
-              small
-              outlined
-              :href="link.link"
-              target="_blank"
-              v-for="(link, index) in links"
-              :key="index"
-              color="text"
-              class="mb-3 mr-3"
-            >
-              <v-icon small>{{ link.icon }}</v-icon>
-              <span class="ml-1">{{ link.title }}</span>
-            </v-btn>
-          </div>
-        </div>
-      </v-col>
-      <v-col>
-        <h2>Technical details</h2>
-        <v-simple-table>
-          <template v-slot:default>
-            <tbody>
-              <tr>
-                <td>Token Type</td>
-                <td v-if="profile.type !== null">
-                  {{ profile.type }}
-                </td>
-                <td v-else>—</td>
-              </tr>
-              <tr>
-                <td>Genesis Date</td>
-                <td v-if="profile.genesisDate !== null">
-                  {{ profile.genesisDate | prettifyDate }}
-                </td>
-                <td v-else>—</td>
-              </tr>
-              <tr>
-                <td>Hashing Algorithm</td>
-                <td v-if="profile.hashingAlgorithm !== null">
-                  {{ profile.hashingAlgorithm }}
-                </td>
-                <td v-else>—</td>
-              </tr>
-              <tr>
-                <td>Consensus Mechanism</td>
-                <td v-if="profile.consensusMechanism !== null">
-                  {{ profile.consensusMechanism }}
-                </td>
-                <td v-else>—</td>
-              </tr>
-            </tbody>
-          </template>
-        </v-simple-table>
-      </v-col>
+      <profile />
     </v-row>
   </v-col>
 </template>
 
 <script>
-import {profile, marketData, historicalData} from '../api/coin';
-import AddTransactionButton from '../components/coin/AddTransactionButton';
-import Card from '../components/common/Card';
 import Chart from '../components/common/Chart';
-import percentColorClass from '../mixins/percentColorClass';
 import Spinner from '../components/common/Spinner';
-import {mapActions} from 'vuex';
+import {mapActions, mapGetters} from 'vuex';
 import {SHOW_ERROR_MESSAGE} from '../store/notification/types';
+import {
+  FETCH_HISTORICAL,
+  FETCH_LATEST,
+  FETCH_PROFILE,
+  GET_HISTORICAL,
+  IS_HISTORICAL_LOADING,
+  IS_LATEST_LOADING,
+  IS_PROFILE_LOADING,
+} from '../store/coin/types';
+import CoinHeader from '../components/coin/CoinHeader';
+import Profile from '../components/coin/Profile';
 
 export default {
   name: 'Coin',
 
   components: {
-    AddTransactionButton,
-    Card,
+    CoinHeader,
     Chart,
+    Profile,
     Spinner,
   },
 
-  mixins: [percentColorClass],
-
-  data() {
-    return {
-      isProfileLoading: false,
-      isMarketDataLoading: false,
-      isHistoricalDataLoading: false,
-      profile: {},
-      marketData: {},
-      historicalData: [],
-      periods: ['1d', '1w', '1m', '6m', '1y', 'all'],
-      period: '1d',
-      linkIconMapper: {
-        twitter: 'mdi-twitter',
-        telegram: 'mdi-telegram',
-        reddit: 'mdi-reddit',
-        github: 'mdi-github',
-        website: 'mdi-web',
-        whitepaper: 'mdi-file-document',
-        explorer: 'mdi-compass',
-      },
-    };
+  props: {
+    id: {
+      type: [Number, String],
+      required: true,
+    },
   },
 
   created() {
-    this.fetchCoinProfile();
-    this.fetchCoinMarketData();
-    this.fetchCoinHistoricalData();
+    try {
+      this.fetchProfile({id: this.id});
+    } catch (e) {
+      this.showErrorMessage(e);
+    }
+
+    try {
+      this.fetchLatest({id: this.id});
+    } catch (e) {
+      this.showErrorMessage(e);
+    }
+
+    try {
+      this.fetchHistorical({id: this.id, period: this.period});
+    } catch (e) {
+      this.showErrorMessage(e);
+    }
   },
 
   watch: {
     period() {
-      this.fetchCoinHistoricalData();
+      try {
+        this.fetchHistorical({id: this.id, period: this.period});
+      } catch (e) {
+        this.showErrorMessage(e);
+      }
     },
+  },
+
+  data() {
+    return {
+      periods: ['1d', '1w', '1m', '6m', '1y', 'all'],
+      period: '1d',
+    };
   },
 
   methods: {
@@ -212,143 +109,37 @@ export default {
       showErrorMessage: SHOW_ERROR_MESSAGE,
     }),
 
-    async fetchCoinProfile() {
-      this.isProfileLoading = true;
-      try {
-        let result = await profile(this.$route.params.id);
-        this.profile = result.data;
-      } catch (e) {
-        this.showErrorMessage(e);
-      }
-      this.isProfileLoading = false;
-    },
-
-    async fetchCoinMarketData() {
-      this.isMarketDataLoading = true;
-      try {
-        let result = await marketData(this.$route.params.id);
-        this.marketData = result.data;
-      } catch (e) {
-        this.showErrorMessage(e);
-      }
-      this.isMarketDataLoading = false;
-    },
-
-    async fetchCoinHistoricalData() {
-      this.isHistoricalDataLoading = true;
-      try {
-        let result = await historicalData(this.$route.params.id, {
-          period: this.period,
-        });
-        this.historicalData = result.data.historicalData;
-      } catch (e) {
-        this.showErrorMessage(e);
-      }
-      this.isHistoricalDataLoading = false;
-    },
-
-    formatSupply(supply) {
-      if (supply === 0) {
-        return '––';
-      }
-
-      return (
-        supply.toLocaleString('en-US') + ' ' + this.profile.symbol.toUpperCase()
-      );
-    },
+    ...mapActions('coin', {
+      fetchProfile: FETCH_PROFILE,
+      fetchLatest: FETCH_LATEST,
+      fetchHistorical: FETCH_HISTORICAL,
+    }),
   },
 
   computed: {
+    ...mapGetters('coin', {
+      isProfileLoading: IS_PROFILE_LOADING,
+      isLatestLoading: IS_LATEST_LOADING,
+      isHistoricalLoading: IS_HISTORICAL_LOADING,
+      historical: GET_HISTORICAL,
+    }),
+
     chartData() {
       let data = {line: [], columns: []};
 
-      for (let i = 0; i < this.historicalData.length - 1; i++) {
+      for (let i = 0; i < this.historical.length - 1; i++) {
         data.line.push([
-          this.historicalData[i].timestamp,
-          this.historicalData[i].price,
+          this.historical[i].timestamp,
+          this.historical[i].price,
         ]);
         data.columns.push([
-          this.historicalData[i].timestamp,
-          this.historicalData[i].volume,
+          this.historical[i].timestamp,
+          this.historical[i].volume,
         ]);
       }
 
       return data;
     },
-
-    marketDataCards() {
-      return [
-        {
-          title: 'Market Cap',
-          value: this.marketData.marketCap,
-          filter: 'formatMarketValue',
-        },
-        {
-          title: 'Volume (24h)',
-          value: this.marketData.volume,
-          filter: 'formatMarketValue',
-        },
-        {
-          title: 'Circulating Supply',
-          value: this.formatSupply(this.marketData.circulatingSupply),
-        },
-        {
-          title: 'Max Supply',
-          value: this.formatSupply(this.marketData.maxSupply),
-        },
-      ];
-    },
-
-    priceChanges() {
-      return [
-        {
-          title: '1H',
-          value: this.marketData.priceChange1H,
-        },
-        {
-          title: '1D',
-          value: this.marketData.priceChange24H,
-        },
-        {
-          title: '1W',
-          value: this.marketData.priceChange7D,
-        },
-        {
-          title: '1M',
-          value: this.marketData.priceChange30D,
-        },
-        {
-          title: '1Y',
-          value: this.marketData.priceChange1Y,
-        },
-      ];
-    },
-
-    links() {
-      return this.profile.links.map(link => {
-        let icon;
-        if (link.type.toLowerCase() in this.linkIconMapper) {
-          icon = this.linkIconMapper[link.type.toLowerCase()];
-        } else {
-          icon = this.linkIconMapper.website;
-        }
-
-        return {
-          title: link.type,
-          link: link.link,
-          icon: icon,
-        };
-      });
-    },
   },
 };
 </script>
-
-<style scoped lang="scss">
-.muted {
-  color: var(--v-text-darken2);
-}
-.price {
-  font-size: 2rem;
-}
-</style>

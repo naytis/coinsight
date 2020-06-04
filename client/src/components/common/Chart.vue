@@ -160,6 +160,9 @@ export default {
 
   computed: {
     lowestValueForPeriod() {
+      if (this.lineItems.length === 0) {
+        return null;
+      }
       return this.lineItems.reduce(
         (min, item) => (item[1] < min ? item[1] : min),
         this.lineItems[0][1],
@@ -167,6 +170,9 @@ export default {
     },
 
     highestValueForPeriod() {
+      if (this.lineItems.length === 0) {
+        return null;
+      }
       return this.lineItems.reduce(
         (max, item) => (item[1] > max ? item[1] : max),
         this.lineItems[0][1],

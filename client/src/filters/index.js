@@ -34,6 +34,10 @@ const dateFromNow = date => {
 };
 
 const formatPercent = percent => {
+  if (!percent) {
+    return '–';
+  }
+
   percent = percent.toFixed(2);
   return (percent > 0 ? '+' + percent : percent) + '%';
 };

@@ -62,6 +62,7 @@ const routes = [
     path: '/coins/:id',
     name: 'coin',
     component: Coin,
+    props: true,
   },
   {
     path: '/register',
