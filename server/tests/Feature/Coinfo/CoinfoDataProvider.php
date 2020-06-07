@@ -10,6 +10,11 @@ use Illuminate\Support\Facades\Http;
 
 trait CoinfoDataProvider
 {
+    public function currencyCoinGeckoId(): string
+    {
+        return 'coin-gecko-id';
+    }
+
     public function currencyName(): string
     {
         return 'Currency Name';
@@ -49,7 +54,7 @@ trait CoinfoDataProvider
             'coinHistoricalData' => [
                 'url' => $this->getEndpointUrlWithWildcard(
                     CoinGecko::BASE_URL,
-                    '/coins/currency-name/market_chart',
+                    '/coins/coin-gecko-id/market_chart',
                 ),
                 'response' => $this->fakeCoinHistoricalDataResponse(),
             ],
@@ -71,6 +76,7 @@ trait CoinfoDataProvider
     {
         return [
             [
+                'id' => 'id',
                 'image' => 'icon1',
                 'name' => 'name1',
                 'symbol' => 'symbol1',
@@ -88,6 +94,7 @@ trait CoinfoDataProvider
                 ],
             ],
             [
+                'id' => 'id',
                 'image' => 'icon2',
                 'name' => 'name2',
                 'symbol' => 'symbol2',
@@ -105,6 +112,7 @@ trait CoinfoDataProvider
                 ],
             ],
             [
+                'id' => 'id',
                 'image' => 'icon3',
                 'name' => 'Currency Name',
                 'symbol' => 'SYMBOL',

@@ -35,7 +35,7 @@ final class SessionsTest extends ApiTestCase
             ]);
     }
 
-    public function test_get_access_token()
+    public function test_refresh()
     {
         $tokenService = $this->app->make(TokenService::class);
         $refreshToken = $tokenService->generateRefreshToken($this->session->id);

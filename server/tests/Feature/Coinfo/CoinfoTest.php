@@ -75,7 +75,7 @@ final class CoinfoTest extends TestCase
     {
         $expectedResponse = $this->fakeCoinHistoricalDataResponse();
 
-        $priceByTime = $this->client->coinHistoricalData($this->currencyName(), $days = 3);
+        $priceByTime = $this->client->coinHistoricalData($this->currencyCoinGeckoId(), $days = 3);
 
         $this->assertCount(count($expectedResponse['prices']), $priceByTime);
 

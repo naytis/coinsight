@@ -13,7 +13,7 @@ use Illuminate\Http\Response;
 use Illuminate\Support\Facades\DB;
 use Tests\Feature\Coinfo\CoinfoDataProvider;
 
-final class MarketsTest extends ApiTestCase
+final class CoinsTest extends ApiTestCase
 {
     use RefreshDatabase, CoinfoDataProvider;
 
@@ -23,28 +23,7 @@ final class MarketsTest extends ApiTestCase
         $this->fakeCoinfo();
     }
 
-    public function test_global_stats()
-    {
-        $coinId = factory(Coin::class)->create([
-            'name' => 'Bitcoin',
-        ])->id;
-        factory(CoinMarketData::class)->create([
-            'coin_id' => $coinId,
-        ]);
-        $this
-            ->apiGet('/global')
-            ->assertStatus(Response::HTTP_OK)
-                ->assertJsonStructure([
-                'data' => [
-                    'market_cap',
-                    'volume',
-                    'bitcoin_dominance',
-                ],
-                'meta' => [],
-            ]);
-    }
-
-    public function test_coins()
+    public function test_get_coins()
     {
         $coinId = DB::table('coins')->insertGetId([
             'name' => 'name1',
@@ -85,7 +64,7 @@ final class MarketsTest extends ApiTestCase
             ]);
     }
 
-    public function test_profile()
+    public function test_get_profile()
     {
         $coinId = DB::table('coins')->insertGetId([
             'name' => 'currency name',
@@ -118,7 +97,7 @@ final class MarketsTest extends ApiTestCase
             ]);
     }
 
-    public function test_market_data()
+    public function test_get_latest()
     {
         $coinId = DB::table('coins')->insertGetId([
             'name' => 'currency name',
@@ -151,11 +130,12 @@ final class MarketsTest extends ApiTestCase
             ]);
     }
 
-    public function test_historical_data()
+    public function test_get_historical()
     {
         $coinId = DB::table('coins')->insertGetId([
             'name' => 'currency name',
             'symbol' => 'symbol',
+            'coin_gecko_id' => 'coin-gecko-id',
         ]);
 
         $response = $this->apiGet("/coins/{$coinId}/historical", [
@@ -175,49 +155,5 @@ final class MarketsTest extends ApiTestCase
             ],
             'meta' => []
         ]);
-    }
-
-    public function test_get_news()
-    {
-        factory(News::class, 10)->create();
-
-        $this->apiGet("news")
-            ->assertStatus(Response::HTTP_OK)
-            ->assertJsonStructure([
-                'data' => [
-                    'news' => [
-                        '*' => [
-                            'id',
-                            'title',
-                            'content',
-                            'published_at',
-                            'author',
-                        ],
-                    ],
-                ],
-                'meta' => [
-                    'total',
-                    'page',
-                    'per_page',
-                    'last_page',
-                ],
-            ]);
-    }
-
-    public function test_get_news_article()
-    {
-        $id = factory(News::class)->create()->id;
-
-        $this->apiGet("news/{$id}")
-            ->assertStatus(Response::HTTP_OK)
-            ->assertJsonStructure([
-                'data' => [
-                    'id',
-                    'title',
-                    'content',
-                    'published_at',
-                    'author',
-                ],
-            ]);
     }
 }

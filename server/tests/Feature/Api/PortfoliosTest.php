@@ -73,7 +73,7 @@ final class PortfoliosTest extends ApiTestCase
             ]);
     }
 
-    public function test_get_portfolio_overview()
+    public function test_get_overview()
     {
         $portfolioId = factory(Portfolio::class)->create()->id;
         $coinId = factory(Coin::class)->create([
@@ -100,7 +100,7 @@ final class PortfoliosTest extends ApiTestCase
             ]);
     }
 
-    public function test_get_portfolio_chart()
+    public function test_get_chart()
     {
         $portfolioId = factory(Portfolio::class)->create()->id;
         $coinId = factory(Coin::class)->create([
@@ -117,7 +117,7 @@ final class PortfoliosTest extends ApiTestCase
             ->assertStatus(Response::HTTP_OK)
             ->assertJsonStructure([
                 'data' => [
-                    'value_by_time' => [
+                    'chart' => [
                         '*' => [
                             'timestamp',
                             'value',
@@ -128,7 +128,7 @@ final class PortfoliosTest extends ApiTestCase
 
     }
 
-    public function test_get_portfolio_assets()
+    public function test_get_assets()
     {
         $portfolioId = factory(Portfolio::class)->create()->id;
         $coinId = factory(Coin::class)->create([
