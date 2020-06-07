@@ -4,10 +4,12 @@ declare(strict_types=1);
 
 namespace App\Domain\Markets\Interactors\Coins;
 
-use App\Domain\Markets\Entities\CoinProfile;
+use App\Domain\Markets\Entities\Coin;
+use App\Domain\Markets\Entities\Profile;
 use Spatie\DataTransferObject\DataTransferObject;
 
 final class GetProfileResponse extends DataTransferObject
 {
-    public CoinProfile $profile;
+    public Coin $coin;
+    public Profile $profile;
 }

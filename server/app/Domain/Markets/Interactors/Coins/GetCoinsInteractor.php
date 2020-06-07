@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Domain\Markets\Interactors\Coins;
 
-use App\Domain\Markets\Entities\CoinOverview as CoinOverviewEntity;
+use App\Domain\Markets\Entities\Overview;
 use App\Domain\Markets\Models\Coin as CoinModel;
 use App\Domain\Markets\Services\CoinService;
 
@@ -19,19 +19,16 @@ final class GetCoinsInteractor
 
     public function execute(GetCoinsRequest $request): GetCoinsResponse
     {
-        $coinOverviewPaginator = $this->coinService->paginate($request->page, $request->perPage);
+        $coinsPaginator = $this->coinService->paginate($request->page, $request->perPage);
 
-        $coinOverviewPaginator->setCollection(
-            $coinOverviewPaginator->toBase()
-                ->map(fn (CoinModel $coin) => CoinOverviewEntity::fromModel($coin))
-        );
+        $coins = $coinsPaginator->map(fn (CoinModel $coin) => Overview::fromModel($coin));
 
         return new GetCoinsResponse([
-            'coins' => $coinOverviewPaginator->getCollection(),
-            'total' => $coinOverviewPaginator->total(),
-            'page' => $coinOverviewPaginator->currentPage(),
-            'perPage' => $coinOverviewPaginator->perPage(),
-            'lastPage' => $coinOverviewPaginator->lastPage(),
+            'coins' => $coins,
+            'total' => $coinsPaginator->total(),
+            'page' => $coinsPaginator->currentPage(),
+            'perPage' => $coinsPaginator->perPage(),
+            'lastPage' => $coinsPaginator->lastPage(),
         ]);
     }
 }

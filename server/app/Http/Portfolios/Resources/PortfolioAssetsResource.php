@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\Http\Portfolios\Resources;
 
 use App\Domain\Portfolios\Entities\Asset;
-use App\Http\Markets\Resources\CoinResource;
+use App\Http\Markets\Mappers\CoinMapper;
 use App\Support\Contracts\Response;
 use Illuminate\Http\Resources\Json\JsonResource;
 
@@ -15,7 +15,7 @@ final class PortfolioAssetsResource extends JsonResource implements Response
     {
         return [
             'assets' => $this->map(fn (Asset $asset) => [
-                'coin' => new CoinResource($asset->coin),
+                'coin' => CoinMapper::map($asset->coin),
                 'price' => $asset->price,
                 'price_change_24h' => $asset->priceChange24h,
                 'holdings' => $asset->holdings,

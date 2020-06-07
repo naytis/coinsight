@@ -8,7 +8,7 @@ use App\Domain\Markets\Entities\Coin as CoinEntity;
 use App\Domain\Markets\Models\Coin as CoinModel;
 use Spatie\DataTransferObject\DataTransferObject;
 
-final class CoinOverview extends DataTransferObject
+final class Overview extends DataTransferObject
 {
     public Coin $coin;
     public float $price;

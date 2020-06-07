@@ -61,22 +61,7 @@ final class TransactionsTest extends ApiTestCase
             ->assertStatus(Response::HTTP_OK)
             ->assertJsonStructure([
                 'data' => [
-                    'id',
-                    'coin' => [
-                        'id',
-                        'name',
-                        'symbol',
-                        'icon',
-                    ],
-                    'type',
-                    'price_per_coin',
-                    'quantity',
-                    'fee',
-                    'cost',
-                    'current_value',
-                    'value_change',
-                    'datetime',
-                    'portfolio_id',
+                    'transaction' => $this->transactionStructure(),
                 ],
             ]);
     }
@@ -89,24 +74,7 @@ final class TransactionsTest extends ApiTestCase
             ->assertJsonStructure([
                 'data' => [
                     'transactions' => [
-                        '*' => [
-                            'id',
-                            'coin' => [
-                                'id',
-                                'name',
-                                'symbol',
-                                'icon',
-                            ],
-                            'type',
-                            'price_per_coin',
-                            'quantity',
-                            'fee',
-                            'cost',
-                            'current_value',
-                            'value_change',
-                            'datetime',
-                            'portfolio_id',
-                        ],
+                        '*' => $this->transactionStructure(),
                     ],
                 ],
             ]);
@@ -121,22 +89,7 @@ final class TransactionsTest extends ApiTestCase
             ->assertStatus(Response::HTTP_OK)
             ->assertJsonStructure([
                 'data' => [
-                    'id',
-                    'coin' => [
-                        'id',
-                        'name',
-                        'symbol',
-                        'icon',
-                    ],
-                    'type',
-                    'price_per_coin',
-                    'quantity',
-                    'fee',
-                    'cost',
-                    'current_value',
-                    'value_change',
-                    'datetime',
-                    'portfolio_id',
+                    'transaction' => $this->transactionStructure(),
                 ],
             ]);
     }
@@ -151,5 +104,27 @@ final class TransactionsTest extends ApiTestCase
                     'id',
                 ],
             ]);
+    }
+
+    private function transactionStructure(): array
+    {
+        return [
+            'id',
+            'coin' => [
+                'id',
+                'name',
+                'symbol',
+                'icon',
+            ],
+            'type',
+            'price_per_coin',
+            'quantity',
+            'fee',
+            'cost',
+            'current_value',
+            'value_change',
+            'datetime',
+            'portfolio_id',
+        ];
     }
 }

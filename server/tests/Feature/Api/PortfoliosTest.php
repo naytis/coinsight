@@ -31,8 +31,7 @@ final class PortfoliosTest extends ApiTestCase
             ->assertStatus(Response::HTTP_OK)
             ->assertJsonStructure([
                 'data' => [
-                    'id',
-                    'name',
+                    'portfolio' => $this->portfolioStructure(),
                 ],
             ]);
     }
@@ -47,10 +46,7 @@ final class PortfoliosTest extends ApiTestCase
             ->assertJsonStructure([
                 'data' => [
                     'portfolios' => [
-                        '*' => [
-                            'id',
-                            'name',
-                        ],
+                        '*' => $this->portfolioStructure(),
                     ],
                 ],
                 'meta' => [
@@ -93,9 +89,11 @@ final class PortfoliosTest extends ApiTestCase
             ->assertStatus(Response::HTTP_OK)
             ->assertJsonStructure([
                 'data' => [
-                    'portfolio',
-                    'total_value',
-                    'total_value_change',
+                    'overview' => [
+                        'portfolio' => $this->portfolioStructure(),
+                        'total_value',
+                        'total_value_change',
+                    ],
                 ],
             ]);
     }
@@ -175,8 +173,7 @@ final class PortfoliosTest extends ApiTestCase
             ->assertStatus(Response::HTTP_OK)
             ->assertJsonStructure([
                 'data' => [
-                    'id',
-                    'name',
+                    'portfolio' => $this->portfolioStructure(),
                 ],
             ]);
     }
@@ -192,5 +189,13 @@ final class PortfoliosTest extends ApiTestCase
                     'id',
                 ],
             ]);
+    }
+
+    private function portfolioStructure(): array
+    {
+        return [
+            'id',
+            'name',
+        ];
     }
 }

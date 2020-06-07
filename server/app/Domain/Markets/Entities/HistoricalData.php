@@ -7,7 +7,7 @@ namespace App\Domain\Markets\Entities;
 use Carbon\Carbon;
 use Spatie\DataTransferObject\DataTransferObject;
 
-final class CoinHistoricalData extends DataTransferObject
+final class HistoricalData extends DataTransferObject
 {
     public Carbon $timestamp;
     public float $price;

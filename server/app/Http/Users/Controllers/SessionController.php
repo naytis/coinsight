@@ -17,7 +17,6 @@ use App\Http\Users\Requests\GetSessionsApiRequest;
 use App\Http\Users\Requests\TerminateSessionApiRequest;
 use App\Http\Users\Resources\AccessTokenResource;
 use App\Http\Users\Resources\SessionCollectionResource;
-use App\Http\Users\Resources\TerminateSessionResource;
 
 final class SessionController
 {
@@ -36,7 +35,7 @@ final class SessionController
         );
 
         return ApiResponse::success(
-            new SessionCollectionResource($sessionsResponse),
+            new SessionCollectionResource($sessionsResponse->sessions),
             [
                 'total' => $sessionsResponse->total,
                 'page' => $sessionsResponse->page,

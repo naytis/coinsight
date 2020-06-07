@@ -6,7 +6,8 @@ namespace App\Domain\Markets\Interactors\Coins;
 
 use App\Coinfo\Client;
 use App\Coinfo\Types\CoinProfile;
-use App\Domain\Markets\Entities\CoinProfile as CoinProfileEntity;
+use App\Domain\Markets\Entities\Coin;
+use App\Domain\Markets\Entities\Profile as ProfileEntity;
 use App\Domain\Markets\Models\CoinProfile as CoinProfileModel;
 use App\Domain\Markets\Models\CoinLink;
 use App\Domain\Markets\Services\CoinService;
@@ -34,7 +35,8 @@ final class GetProfileInteractor
         }
 
         return new GetProfileResponse([
-            'profile' => CoinProfileEntity::fromModel($coin)
+            'coin' => Coin::fromModel($coin),
+            'profile' => ProfileEntity::fromModel($coin)
         ]);
     }
 

@@ -5,7 +5,8 @@ declare(strict_types=1);
 namespace App\Domain\Markets\Interactors\Coins;
 
 use App\Coinfo\Client;
-use App\Domain\Markets\Entities\CoinHistoricalData;
+use App\Domain\Markets\Entities\Coin;
+use App\Domain\Markets\Entities\HistoricalData;
 use App\Domain\Markets\Enums\ChartDays;
 use App\Domain\Markets\Services\CoinService;
 
@@ -31,10 +32,11 @@ final class GetHistoricalDataInteractor
         }
 
         $historicalData = collect($historicalDataResponse)->map(
-            fn ($historicalDataItem) => new CoinHistoricalData($historicalDataItem->toArray())
+            fn ($historicalDataItem) => new HistoricalData($historicalDataItem->toArray())
         );
 
         return new GetHistoricalDataResponse([
+            'coin' => Coin::fromModel($coin),
             'historicalData' => $historicalData,
         ]);
     }

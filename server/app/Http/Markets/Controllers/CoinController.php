@@ -51,37 +51,40 @@ final class CoinController
         GetCoinProfileApiRequest $request,
         GetProfileInteractor $profileInteractor
     ): ApiResponse {
-        $coinProfile = $profileInteractor
-            ->execute(new GetProfileRequest(['id' => $request->id()]))
-            ->profile;
+        $profileResponse = $profileInteractor->execute(
+            new GetProfileRequest([
+                'id' => $request->id()
+            ])
+        );
 
-        return ApiResponse::success(new CoinProfileResource($coinProfile));
+        return ApiResponse::success(new CoinProfileResource($profileResponse));
     }
 
     public function getCoinMarketData(
         GetCoinMarketDataApiRequest $request,
         GetMarketDataInteractor $marketDataInteractor
     ): ApiResponse {
-        $coinMarketData = $marketDataInteractor
-            ->execute(new GetMarketDataRequest(['id' => $request->id()]))
-            ->marketData;
+        $marketDataResponse = $marketDataInteractor->execute(
+            new GetMarketDataRequest([
+                'id' => $request->id()
+            ])
+        );
 
-        return ApiResponse::success(new CoinMarketDataResource($coinMarketData));
+        return ApiResponse::success(new CoinMarketDataResource($marketDataResponse));
     }
 
     public function getCoinHistoricalData(
         GetCoinHistoricalDataApiRequest $request,
         GetHistoricalDataInteractor $historicalDataInteractor
     ): ApiResponse {
-        $coinHistoricalData = $historicalDataInteractor
+        $historicalDataResponse = $historicalDataInteractor
             ->execute(
                 new GetHistoricalDataRequest([
                     'id' => $request->id(),
                     'days' => new ChartDays($request->period()),
                 ])
-            )
-            ->historicalData;
+            );
 
-        return ApiResponse::success(new CoinHistoricalDataCollectionResource($coinHistoricalData));
+        return ApiResponse::success(new CoinHistoricalDataCollectionResource($historicalDataResponse));
     }
 }

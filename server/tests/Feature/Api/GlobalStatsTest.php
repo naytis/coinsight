@@ -26,9 +26,11 @@ final class GlobalStatsTest extends ApiTestCase
             ->assertStatus(Response::HTTP_OK)
             ->assertJsonStructure([
                 'data' => [
-                    'market_cap',
-                    'volume',
-                    'bitcoin_dominance',
+                    'global' => [
+                        'market_cap',
+                        'volume',
+                        'bitcoin_dominance',
+                    ],
                 ],
                 'meta' => [],
             ]);

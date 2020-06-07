@@ -56,8 +56,10 @@ final class AuthTest extends ApiTestCase
             ->assertStatus(Response::HTTP_OK)
             ->assertJson([
                 'data' => [
-                    'email' => $this->user->email,
-                    'username' => $this->user->username,
+                    'user' => [
+                        'email' => $this->user->email,
+                        'username' => $this->user->username,
+                    ],
                 ],
             ]);
     }

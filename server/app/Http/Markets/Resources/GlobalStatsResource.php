@@ -12,9 +12,11 @@ final class GlobalStatsResource extends JsonResource implements Response
     public function toArray($request): array
     {
         return [
-            'market_cap' => $this->marketCap,
-            'volume' => $this->volume,
-            'bitcoin_dominance' => $this->bitcoinDominance,
+            'global' => [
+                'market_cap' => $this->marketCap,
+                'volume' => $this->volume,
+                'bitcoin_dominance' => $this->bitcoinDominance,
+            ],
         ];
     }
 }

@@ -22,13 +22,7 @@ final class NewsTest extends ApiTestCase
             ->assertJsonStructure([
                 'data' => [
                     'news' => [
-                        '*' => [
-                            'id',
-                            'title',
-                            'content',
-                            'published_at',
-                            'author',
-                        ],
+                        '*' => $this->newsArticleStructure(),
                     ],
                 ],
                 'meta' => [
@@ -49,12 +43,19 @@ final class NewsTest extends ApiTestCase
             ->assertStatus(Response::HTTP_OK)
             ->assertJsonStructure([
                 'data' => [
-                    'id',
-                    'title',
-                    'content',
-                    'published_at',
-                    'author',
+                    'article' => $this->newsArticleStructure(),
                 ],
             ]);
+    }
+
+    private function newsArticleStructure(): array
+    {
+        return [
+            'id',
+            'title',
+            'content',
+            'published_at',
+            'author',
+        ];
     }
 }

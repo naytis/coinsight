@@ -76,21 +76,20 @@ final class CoinsTest extends ApiTestCase
             ->assertStatus(Response::HTTP_OK)
             ->assertJsonStructure([
                 'data' => [
-                    'id',
-                    'name',
-                    'symbol',
-                    'icon',
-                    'tagline',
-                    'description',
-                    'type',
-                    'genesis_date',
-                    'consensus_mechanism',
-                    'hashing_algorithm',
-                    'links' => [
-                        '*' => [
-                            'type',
-                            'link',
-                        ]
+                    'coin' => $this->coinStructure(),
+                    'profile' => [
+                        'tagline',
+                        'description',
+                        'type',
+                        'genesis_date',
+                        'consensus_mechanism',
+                        'hashing_algorithm',
+                        'links' => [
+                            '*' => [
+                                'type',
+                                'link',
+                            ]
+                        ],
                     ],
                 ],
                 'meta' => []
@@ -112,19 +111,19 @@ final class CoinsTest extends ApiTestCase
             ->assertStatus(Response::HTTP_OK)
             ->assertJsonStructure([
                 'data' => [
-                    'id',
-                    'name',
-                    'symbol',
-                    'circulating_supply',
-                    'max_supply',
-                    'price',
-                    'volume',
-                    'market_cap',
-                    'price_change_1h',
-                    'price_change_24h',
-                    'price_change_7d',
-                    'price_change_30d',
-                    'price_change_1y',
+                    'coin' => $this->coinStructure(),
+                    'market_data' => [
+                        'circulating_supply',
+                        'max_supply',
+                        'price',
+                        'volume',
+                        'market_cap',
+                        'price_change_1h',
+                        'price_change_24h',
+                        'price_change_7d',
+                        'price_change_30d',
+                        'price_change_1y',
+                    ],
                 ],
                 'meta' => []
             ]);
@@ -155,5 +154,15 @@ final class CoinsTest extends ApiTestCase
             ],
             'meta' => []
         ]);
+    }
+
+    private function coinStructure(): array
+    {
+        return [
+            'id',
+            'name',
+            'symbol',
+            'icon',
+        ];
     }
 }

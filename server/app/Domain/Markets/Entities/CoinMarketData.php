@@ -5,13 +5,11 @@ declare(strict_types=1);
 namespace App\Domain\Markets\Entities;
 
 use App\Domain\Markets\Models\Coin as CoinModel;
+use App\Domain\Markets\Models\CoinMarketData as CoinMarketDataModel;
 use Spatie\DataTransferObject\DataTransferObject;
 
 final class CoinMarketData extends DataTransferObject
 {
-    public int $id;
-    public string $name;
-    public string $symbol;
     public float $circulatingSupply;
     public ?float $maxSupply;
     public float $price;
@@ -23,22 +21,19 @@ final class CoinMarketData extends DataTransferObject
     public float $priceChange30d;
     public float $priceChange1y;
 
-    public static function fromModel(CoinModel $coinModel): self
+    public static function fromModel(CoinMarketDataModel $marketDataModel): self
     {
         return new static([
-            'id' => $coinModel->id,
-            'name' => $coinModel->name,
-            'symbol' => $coinModel->symbol,
-            'circulatingSupply' => $coinModel->marketData->circulating_supply,
-            'maxSupply' => $coinModel->marketData->max_supply,
-            'price' => $coinModel->marketData->price,
-            'volume' => $coinModel->marketData->volume,
-            'marketCap' => $coinModel->marketData->market_cap,
-            'priceChange1h' => $coinModel->marketData->price_change_1h,
-            'priceChange24h' => $coinModel->marketData->price_change_24h,
-            'priceChange7d' => $coinModel->marketData->price_change_7d,
-            'priceChange30d' => $coinModel->marketData->price_change_30d,
-            'priceChange1y' => $coinModel->marketData->price_change_1y,
+            'circulatingSupply' => $marketDataModel->circulating_supply,
+            'maxSupply' => $marketDataModel->max_supply,
+            'price' => $marketDataModel->price,
+            'volume' => $marketDataModel->volume,
+            'marketCap' => $marketDataModel->market_cap,
+            'priceChange1h' => $marketDataModel->price_change_1h,
+            'priceChange24h' => $marketDataModel->price_change_24h,
+            'priceChange7d' => $marketDataModel->price_change_7d,
+            'priceChange30d' => $marketDataModel->price_change_30d,
+            'priceChange1y' => $marketDataModel->price_change_1y,
         ]);
     }
 }

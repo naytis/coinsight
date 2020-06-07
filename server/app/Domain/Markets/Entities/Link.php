@@ -7,7 +7,7 @@ namespace App\Domain\Markets\Entities;
 use App\Domain\Markets\Models\CoinLink as CoinLinkModel;
 use Spatie\DataTransferObject\DataTransferObject;
 
-final class CoinLink extends DataTransferObject
+final class Link extends DataTransferObject
 {
     public string $type;
     public string $link;

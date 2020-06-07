@@ -10,12 +10,8 @@ use Carbon\Carbon;
 use Illuminate\Support\Collection;
 use Spatie\DataTransferObject\DataTransferObject;
 
-final class CoinProfile extends DataTransferObject
+final class Profile extends DataTransferObject
 {
-    public int $id;
-    public string $name;
-    public ?string $symbol;
-    public ?string $icon;
     public ?string $tagline;
     public ?string $description;
     public ?string $type;
@@ -27,10 +23,6 @@ final class CoinProfile extends DataTransferObject
     public static function fromModel(CoinModel $coinModel): self
     {
         return new static([
-            'id' => $coinModel->id,
-            'name' => $coinModel->name,
-            'symbol' => $coinModel->symbol,
-            'icon' => $coinModel->icon,
             'tagline' => $coinModel->profile->tagline,
             'description' => $coinModel->profile->description,
             'type' => $coinModel->profile->type,
@@ -38,7 +30,7 @@ final class CoinProfile extends DataTransferObject
             'consensusMechanism' => $coinModel->profile->consensus_mechanism,
             'hashingAlgorithm' => $coinModel->profile->hashing_algorithm,
             'links' => $coinModel->links->map(
-                fn (CoinLinkModel $link) => CoinLink::fromModel($link)
+                fn (CoinLinkModel $link) => Link::fromModel($link)
             ),
         ]);
     }

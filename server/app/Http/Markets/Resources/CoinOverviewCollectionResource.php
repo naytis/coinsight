@@ -4,7 +4,8 @@ declare(strict_types=1);
 
 namespace App\Http\Markets\Resources;
 
-use App\Domain\Markets\Entities\CoinOverview;
+use App\Domain\Markets\Entities\Overview;
+use App\Http\Markets\Mappers\CoinMapper;
 use App\Support\Contracts\Response;
 use Illuminate\Http\Resources\Json\JsonResource;
 
@@ -13,7 +14,7 @@ final class CoinOverviewCollectionResource extends JsonResource implements Respo
     public function toArray($request): array
     {
         $coins = $this->map(
-            fn (CoinOverview $overview, int $index) => [
+            fn (Overview $overview, int $index) => [
                 'id' => $overview->coin->id,
                 'name' => $overview->coin->name,
                 'symbol' => $overview->coin->symbol,
@@ -25,7 +26,6 @@ final class CoinOverviewCollectionResource extends JsonResource implements Respo
                 'volume' => $overview->volume,
             ],
         );
-
 
         return [
             'coins' => $coins,

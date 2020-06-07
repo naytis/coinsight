@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Domain\Markets\Interactors\Coins;
 
-use App\Coinfo\Client;
+use App\Domain\Markets\Entities\Coin;
 use App\Domain\Markets\Entities\CoinMarketData;
 use App\Domain\Markets\Services\CoinService;
 
@@ -12,7 +12,7 @@ final class GetMarketDataInteractor
 {
     private CoinService $coinService;
 
-    public function __construct(Client $client, CoinService $coinService)
+    public function __construct(CoinService $coinService)
     {
         $this->coinService = $coinService;
     }
@@ -22,7 +22,8 @@ final class GetMarketDataInteractor
         $coin = $this->coinService->getById($request->id, ['marketData', 'profile']);
 
         return new GetMarketDataResponse([
-            'marketData' => CoinMarketData::fromModel($coin)
+            'coin' => Coin::fromModel($coin),
+            'marketData' => CoinMarketData::fromModel($coin->marketData)
         ]);
     }
 }
