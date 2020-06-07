@@ -66,4 +66,14 @@ abstract class ApiTestCase extends TestCase
 
         return $uri . '?' . http_build_query($data);
     }
+
+    protected function metaStructure(): array
+    {
+        return [
+            'total',
+            'page',
+            'per_page',
+            'last_page',
+        ];
+    }
 }

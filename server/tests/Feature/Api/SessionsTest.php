@@ -18,20 +18,10 @@ final class SessionsTest extends ApiTestCase
             ->assertJsonStructure([
                 'data' => [
                     'sessions' => [
-                        '*' => [
-                            'id',
-                            'user_id',
-                            'created_at',
-                            'last_used_at',
-                        ],
+                        '*' => $this->sessionStructure(),
                     ],
                 ],
-                'meta' => [
-                    'total',
-                    'page',
-                    'per_page',
-                    'last_page',
-                ],
+                'meta' => $this->metaStructure(),
             ]);
     }
 
@@ -65,5 +55,15 @@ final class SessionsTest extends ApiTestCase
                     'id' => $session->id,
                 ],
             ]);
+    }
+
+    private function sessionStructure(): array
+    {
+        return [
+            'id',
+            'user_id',
+            'created_at',
+            'last_used_at',
+        ];
     }
 }

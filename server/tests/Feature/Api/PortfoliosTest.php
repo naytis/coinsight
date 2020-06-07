@@ -14,12 +14,33 @@ use Tests\Feature\Coinfo\CoinfoDataProvider;
 
 final class PortfoliosTest extends ApiTestCase
 {
-    use RefreshDatabase, CoinfoDataProvider;
+    use CoinfoDataProvider;
+    use RefreshDatabase;
+
+    private int $portfolioId;
 
     protected function setUp(): void
     {
         parent::setUp();
+
         $this->fakeCoinfo();
+
+        $this->portfolioId = factory(Portfolio::class)->create()->id;
+
+        $coinId = factory(Coin::class)->create([
+            'name' => $this->currencyName(),
+            'symbol' => $this->currencySymbol(),
+            'coin_gecko_id' => $this->currencyCoinGeckoId(),
+        ])->id;
+
+        factory(CoinMarketData::class)->create([
+            'coin_id' => $coinId
+        ]);
+
+        factory(Transaction::class, 5)->create([
+            'portfolio_id' => $this->portfolioId,
+            'coin_id' => $coinId,
+        ]);
     }
 
     public function test_create_portfolio()
@@ -38,8 +59,6 @@ final class PortfoliosTest extends ApiTestCase
 
     public function test_get_portfolios()
     {
-        factory(Portfolio::class)->create();
-
         $this
             ->apiGet('/portfolios')
             ->assertStatus(Response::HTTP_OK)
@@ -49,78 +68,30 @@ final class PortfoliosTest extends ApiTestCase
                         '*' => $this->portfolioStructure(),
                     ],
                 ],
-                'meta' => [
-                    'total',
-                    'page',
-                    'per_page',
-                    'last_page',
-                ],
-            ]);
-    }
-
-    public function test_get_portfolios_when_no_portfolios()
-    {
-        $this
-            ->apiGet('/portfolios')
-            ->assertStatus(Response::HTTP_OK)
-            ->assertJson([
-                'data' => [],
-                'meta' => [],
+                'meta' => $this->metaStructure(),
             ]);
     }
 
     public function test_get_overview()
     {
-        $portfolioId = factory(Portfolio::class)->create()->id;
-        $coinId = factory(Coin::class)->create([
-            'name' => $this->currencyName(),
-            'symbol' => $this->currencySymbol(),
-        ])->id;
-        factory(Transaction::class)->create([
-            'portfolio_id' => $portfolioId,
-            'coin_id' => $coinId,
-        ]);
-        factory(CoinMarketData::class)->create([
-            'coin_id' => $coinId
-        ]);
-
         $this
-            ->apiGet("/portfolios/{$portfolioId}")
+            ->apiGet("/portfolios/{$this->portfolioId}")
             ->assertStatus(Response::HTTP_OK)
             ->assertJsonStructure([
                 'data' => [
-                    'overview' => [
-                        'portfolio' => $this->portfolioStructure(),
-                        'total_value',
-                        'total_value_change',
-                    ],
+                    'overview' => $this->overviewStructure(),
                 ],
             ]);
     }
 
     public function test_get_chart()
     {
-        $portfolioId = factory(Portfolio::class)->create()->id;
-        $coinId = factory(Coin::class)->create([
-            'name' => $this->currencyName(),
-            'symbol' => $this->currencySymbol(),
-        ])->id;
-        factory(Transaction::class)->create([
-            'portfolio_id' => $portfolioId,
-            'coin_id' => $coinId,
-        ]);
-
         $this
-            ->apiGet("/portfolios/{$portfolioId}/chart")
+            ->apiGet("/portfolios/{$this->portfolioId}/chart")
             ->assertStatus(Response::HTTP_OK)
             ->assertJsonStructure([
                 'data' => [
-                    'chart' => [
-                        '*' => [
-                            'timestamp',
-                            'value',
-                        ],
-                    ],
+                    'chart' => $this->chartStructure(),
                 ],
             ]);
 
@@ -128,46 +99,21 @@ final class PortfoliosTest extends ApiTestCase
 
     public function test_get_assets()
     {
-        $portfolioId = factory(Portfolio::class)->create()->id;
-        $coinId = factory(Coin::class)->create([
-            'name' => $this->currencyName(),
-            'symbol' => $this->currencySymbol(),
-        ])->id;
-        factory(Transaction::class)->create([
-            'portfolio_id' => $portfolioId,
-            'coin_id' => $coinId,
-        ]);
-        factory(CoinMarketData::class)->create([
-            'coin_id' => $coinId
-        ]);
-
         $this
-            ->apiGet("/portfolios/{$portfolioId}/assets")
+            ->apiGet("/portfolios/{$this->portfolioId}/assets")
             ->assertStatus(Response::HTTP_OK)
             ->assertJsonStructure([
                 'data' => [
-                    'assets' => [
-                        '*' => [
-                            'coin',
-                            'price',
-                            'price_change_24h',
-                            'holdings',
-                            'market_value',
-                            'net_cost',
-                            'net_profit',
-                            'percent_change',
-                            'share',
-                        ],
-                    ],
+                    'assets' => $this->assetsStructure(),
                 ],
+                'meta' => $this->metaStructure(),
             ]);
     }
 
     public function test_update_portfolio()
     {
-        $portfolioId = factory(Portfolio::class)->create()->id;
         $this
-            ->apiPut("/portfolios/{$portfolioId}", [
+            ->apiPut("/portfolios/{$this->portfolioId}", [
                 'name' => 'updated name'
             ])
             ->assertStatus(Response::HTTP_OK)
@@ -180,9 +126,8 @@ final class PortfoliosTest extends ApiTestCase
 
     public function test_delete_portfolio()
     {
-        $portfolioId = factory(Portfolio::class)->create()->id;
         $this
-            ->apiDelete("/portfolios/{$portfolioId}")
+            ->apiDelete("/portfolios/{$this->portfolioId}")
             ->assertStatus(Response::HTTP_OK)
             ->assertJsonStructure([
                 'data' => [
@@ -196,6 +141,42 @@ final class PortfoliosTest extends ApiTestCase
         return [
             'id',
             'name',
+        ];
+    }
+
+    private function overviewStructure(): array
+    {
+        return [
+            'portfolio' => $this->portfolioStructure(),
+            'total_value',
+            'total_value_change',
+        ];
+    }
+
+    private function chartStructure(): array
+    {
+        return [
+            '*' => [
+                'timestamp',
+                'value',
+            ],
+        ];
+    }
+
+    private function assetsStructure(): array
+    {
+        return [
+            '*' => [
+                'coin',
+                'price',
+                'price_change_24h',
+                'holdings',
+                'market_value',
+                'net_cost',
+                'net_profit',
+                'percent_change',
+                'share',
+            ],
         ];
     }
 }

@@ -7,33 +7,40 @@ namespace Tests\Feature\Api;
 use App\Domain\Markets\Models\Coin;
 use App\Domain\Markets\Models\CoinMarketData;
 use App\Domain\Markets\Models\CoinProfile;
-use App\Domain\Markets\Models\News;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\Response;
-use Illuminate\Support\Facades\DB;
 use Tests\Feature\Coinfo\CoinfoDataProvider;
 
 final class CoinsTest extends ApiTestCase
 {
-    use RefreshDatabase, CoinfoDataProvider;
+    use CoinfoDataProvider;
+    use RefreshDatabase;
+
+    private int $coinId;
 
     public function setUp(): void
     {
         parent::setUp();
+
         $this->fakeCoinfo();
+
+        $this->coinId = factory(Coin::class)->create([
+            'name' => $this->currencyName(),
+            'symbol' => $this->currencySymbol(),
+            'coin_gecko_id' => $this->currencyCoinGeckoId(),
+        ])->id;
+
+        factory(CoinMarketData::class)->create([
+            'coin_id' => $this->coinId,
+        ]);
+
+        factory(CoinProfile::class)->create([
+           'coin_id' => $this->coinId,
+        ]);
     }
 
     public function test_get_coins()
     {
-        $coinId = DB::table('coins')->insertGetId([
-            'name' => 'name1',
-            'symbol' => 'symbol1',
-            'icon' => 'icon1',
-        ]);
-        factory(CoinMarketData::class)->create([
-            'coin_id' => $coinId,
-        ]);
-
         $this
             ->apiGet('/coins', [
                 'page' => 1,
@@ -43,117 +50,52 @@ final class CoinsTest extends ApiTestCase
             ->assertJsonStructure([
                 'data' => [
                     'coins' => [
-                        '*' => [
-                            'id',
-                            'name',
-                            'symbol',
-                            'icon',
-                            'rank',
-                            'price',
-                            'price_change_24h',
-                            'market_cap',
-                            'volume',
-                        ]
-                    ]
+                        '*' => $this->overviewStructure(),
+                    ],
                 ],
-                'meta' => [
-                    'total',
-                    'page',
-                    'per_page',
-                ]
+                'meta' => $this->metaStructure(),
             ]);
     }
 
     public function test_get_profile()
     {
-        $coinId = DB::table('coins')->insertGetId([
-            'name' => 'currency name',
-            'symbol' => 'symbol',
-        ]);
-
         $this
-            ->apiGet("/coins/{$coinId}/profile")
+            ->apiGet("/coins/{$this->coinId}/profile")
             ->assertStatus(Response::HTTP_OK)
             ->assertJsonStructure([
                 'data' => [
                     'coin' => $this->coinStructure(),
-                    'profile' => [
-                        'tagline',
-                        'description',
-                        'type',
-                        'genesis_date',
-                        'consensus_mechanism',
-                        'hashing_algorithm',
-                        'links' => [
-                            '*' => [
-                                'type',
-                                'link',
-                            ]
-                        ],
-                    ],
+                    'profile' => $this->profileStructure(),
                 ],
-                'meta' => []
             ]);
     }
 
     public function test_get_latest()
     {
-        $coinId = DB::table('coins')->insertGetId([
-            'name' => 'currency name',
-            'symbol' => 'symbol',
-        ]);
-        factory(CoinMarketData::class)->create([
-            'coin_id' => $coinId,
-        ]);
-
         $this
-            ->apiGet("/coins/{$coinId}/latest")
+            ->apiGet("/coins/{$this->coinId}/latest")
             ->assertStatus(Response::HTTP_OK)
             ->assertJsonStructure([
                 'data' => [
                     'coin' => $this->coinStructure(),
-                    'market_data' => [
-                        'circulating_supply',
-                        'max_supply',
-                        'price',
-                        'volume',
-                        'market_cap',
-                        'price_change_1h',
-                        'price_change_24h',
-                        'price_change_7d',
-                        'price_change_30d',
-                        'price_change_1y',
-                    ],
+                    'market_data' => $this->marketDataStructure(),
                 ],
-                'meta' => []
             ]);
     }
 
     public function test_get_historical()
     {
-        $coinId = DB::table('coins')->insertGetId([
-            'name' => 'currency name',
-            'symbol' => 'symbol',
-            'coin_gecko_id' => 'coin-gecko-id',
-        ]);
-
-        $response = $this->apiGet("/coins/{$coinId}/historical", [
-            'period' => '1w'
-        ]);
-
-        $response->assertStatus(Response::HTTP_OK)->assertJsonStructure([
-            'data' => [
-                'historical_data' => [
-                    '*' => [
-                        'timestamp',
-                        'price',
-                        'market_cap',
-                        'volume',
-                    ],
+        $this
+            ->apiGet("/coins/{$this->coinId}/historical", [
+                'period' => '1w'
+            ])
+            ->assertStatus(Response::HTTP_OK)
+            ->assertJsonStructure([
+                'data' => [
+                    'coin' => $this->coinStructure(),
+                    'historical_data' => $this->historicalDataStructure(),
                 ],
-            ],
-            'meta' => []
-        ]);
+            ]);
     }
 
     private function coinStructure(): array
@@ -163,6 +105,64 @@ final class CoinsTest extends ApiTestCase
             'name',
             'symbol',
             'icon',
+        ];
+    }
+
+    private function overviewStructure(): array
+    {
+        return [
+            ...$this->coinStructure(),
+            'rank',
+            'price',
+            'price_change_24h',
+            'market_cap',
+            'volume',
+        ];
+    }
+
+    private function profileStructure(): array
+    {
+        return [
+            'tagline',
+            'description',
+            'type',
+            'genesis_date',
+            'consensus_mechanism',
+            'hashing_algorithm',
+            'links' => [
+                '*' => [
+                    'type',
+                    'link',
+                ]
+            ],
+        ];
+    }
+
+    private function marketDataStructure(): array
+    {
+        return [
+            'circulating_supply',
+            'max_supply',
+            'price',
+            'volume',
+            'market_cap',
+            'price_change_1h',
+            'price_change_24h',
+            'price_change_7d',
+            'price_change_30d',
+            'price_change_1y',
+        ];
+    }
+
+    private function historicalDataStructure(): array
+    {
+        return [
+            '*' => [
+                'timestamp',
+                'price',
+                'market_cap',
+                'volume',
+            ],
         ];
     }
 }

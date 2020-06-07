@@ -25,12 +25,7 @@ final class NewsTest extends ApiTestCase
                         '*' => $this->newsArticleStructure(),
                     ],
                 ],
-                'meta' => [
-                    'total',
-                    'page',
-                    'per_page',
-                    'last_page',
-                ],
+                'meta' => $this->metaStructure(),
             ]);
     }
 

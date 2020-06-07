@@ -8,6 +8,7 @@ use App\Domain\Markets\Models\Coin;
 use App\Domain\Markets\Models\CoinMarketData;
 use App\Domain\Portfolios\Enums\TransactionType;
 use App\Domain\Portfolios\Models\Portfolio;
+use App\Domain\Portfolios\Models\Transaction;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\DB;
@@ -16,7 +17,8 @@ use Tests\Feature\Coinfo\CoinfoDataProvider;
 
 final class TransactionsTest extends ApiTestCase
 {
-    use RefreshDatabase, CoinfoDataProvider;
+    use CoinfoDataProvider;
+    use RefreshDatabase;
 
     private int $coinId;
     private int $portfolioId;
@@ -25,26 +27,24 @@ final class TransactionsTest extends ApiTestCase
     public function setUp(): void
     {
         parent::setUp();
+
         $this->fakeCoinfo();
-        $this->coinId = factory(Coin::class)
-            ->create([
-                'name' => $this->currencyName(),
-                'symbol' => $this->currencySymbol(),
-            ])
-            ->id;
+
+        $this->portfolioId = factory(Portfolio::class)->create()->id;
+
+        $this->coinId = factory(Coin::class)->create([
+            'name' => $this->currencyName(),
+            'symbol' => $this->currencySymbol(),
+        ])->id;
+
         factory(CoinMarketData::class)->create([
             'coin_id' => $this->coinId,
         ]);
-        $this->portfolioId = factory(Portfolio::class)->create()->id;
-        $this->transactionId = DB::table('transactions')->insertGetId([
-            'type' => TransactionType::BUY,
-            'price_per_coin' => 1,
-            'quantity' => 1,
-            'fee' => 1,
-            'datetime' => now(),
+
+        $this->transactionId = factory(Transaction::class)->create([
             'portfolio_id' => $this->portfolioId,
             'coin_id' => $this->coinId,
-        ]);
+        ])->id;
     }
 
     public function test_create_transaction()

@@ -18,9 +18,11 @@ final class GlobalStatsTest extends ApiTestCase
         $coinId = factory(Coin::class)->create([
             'name' => 'Bitcoin',
         ])->id;
+
         factory(CoinMarketData::class)->create([
             'coin_id' => $coinId,
         ]);
+
         $this
             ->apiGet('/global')
             ->assertStatus(Response::HTTP_OK)
@@ -32,7 +34,6 @@ final class GlobalStatsTest extends ApiTestCase
                         'bitcoin_dominance',
                     ],
                 ],
-                'meta' => [],
             ]);
     }
 }
