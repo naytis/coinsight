@@ -40,6 +40,7 @@ trait CoinfoDataProvider
             'markets' => [
                 'url' => $this->getEndpointUrlWithWildcard(
                     CoinGecko::BASE_URL,
+                    'v3',
                     'coins/markets',
                 ),
                 'response' => $this->fakeCoinGeckoMarketsResponse(),
@@ -47,6 +48,7 @@ trait CoinfoDataProvider
             'coinProfile' => [
                 'url' => $this->getEndpointUrlWithWildcard(
                     Messari::BASE_URL,
+                    'v2',
                     'assets/currency-name/profile',
                 ),
                 'response' => $this->fakeCoinProfileResponse(),
@@ -54,6 +56,7 @@ trait CoinfoDataProvider
             'coinHistoricalData' => [
                 'url' => $this->getEndpointUrlWithWildcard(
                     CoinGecko::BASE_URL,
+                    'v3',
                     '/coins/coin-gecko-id/market_chart',
                 ),
                 'response' => $this->fakeCoinHistoricalDataResponse(),
@@ -61,6 +64,7 @@ trait CoinfoDataProvider
             'news' => [
                 'url' => $this->getEndpointUrlWithWildcard(
                     Messari::BASE_URL,
+                    'v1',
                     'news',
                 ),
                 'response' => $this->fakeNewsResponse(),
@@ -247,5 +251,17 @@ trait CoinfoDataProvider
                 ],
             ],
         ];
+    }
+
+    private function getEndpointUrl(string $base, string $version, string $endpoint): string
+    {
+        $base = str_replace('%ver%', $version, $base);
+
+        return trim($base, '/') . '/' . trim($endpoint, '/');
+    }
+
+    private function getEndpointUrlWithWildcard(string $base, string $version, string $endpoint): string
+    {
+        return $this->getEndpointUrl($base, $version, $endpoint) . '*';
     }
 }

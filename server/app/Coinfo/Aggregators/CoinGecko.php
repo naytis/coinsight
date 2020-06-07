@@ -11,7 +11,9 @@ use App\Coinfo\Types\CoinHistoricalDataCollection;
 
 final class CoinGecko extends Aggregator
 {
-    public const BASE_URL = 'https://api.coingecko.com/api/v3/';
+    public const BASE_URL = 'https://api.coingecko.com/api/%ver%/';
+
+    private string $apiVersion = 'v3';
 
     public function coinsMarkets(
         int $page = 1,
@@ -40,5 +42,10 @@ final class CoinGecko extends Aggregator
         ]);
 
         return CoinHistoricalDataCollectionFactory::create($data);
+    }
+
+    public function apiVersion(): string
+    {
+        return $this->apiVersion;
     }
 }

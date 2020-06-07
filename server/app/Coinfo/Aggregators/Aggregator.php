@@ -22,7 +22,9 @@ abstract class Aggregator
             throw new AggregatorApiUrl('Aggregator api url is missing');
         }
 
-        return trim(static::BASE_URL, '/') . '/' . trim($endpoint, '/');
+        $base = str_replace('%ver%', $this->apiVersion(), static::BASE_URL);
+
+        return trim($base, '/') . '/' . trim($endpoint, '/');
     }
 
     protected function request(string $endpoint, array $query = []): array
