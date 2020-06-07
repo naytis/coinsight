@@ -6,7 +6,10 @@ namespace App\Console\Commands;
 
 use App\Coinfo\Client;
 use App\Coinfo\Types\CoinMarketData;
+use App\Coinfo\Types\CoinProfile;
 use App\Domain\Markets\Models\Coin;
+use App\Domain\Markets\Models\CoinLink;
+use App\Domain\Markets\Models\CoinProfile as CoinProfileModel;
 use Carbon\Carbon;
 use Exception;
 use Illuminate\Console\Command;
@@ -47,11 +50,13 @@ final class UpdateCoins extends Command
         $bar = $this->output->createProgressBar($missingCoinsCount);
         $bar->start();
 
-        $coinsRecords = [];
-
         foreach ($missingCoins as $missingCoin) {
             try {
-                $coinsRecords[] = $this->makeCoinRecord($missingCoin);
+                $coin = $this->saveCoin($missingCoin);
+                $coinProfile = $client->coinProfile($coin->name);
+                $coin->profile()->save($this->makeCoinProfile($coinProfile));
+                $coin->links()->saveMany($this->makeCoinLinks($coinProfile));
+
             } catch (Exception $exception) {
                 $this->addError($missingCoin, $exception);
             }
@@ -60,8 +65,6 @@ final class UpdateCoins extends Command
 
             $bar->advance();
         }
-
-        DB::table('coins')->insert($coinsRecords);
 
         $bar->finish();
         $this->line("\n");
@@ -87,7 +90,7 @@ final class UpdateCoins extends Command
         );
     }
 
-    private function makeCoinRecord(CoinMarketData $coinMarketData): array
+    private function saveCoin(CoinMarketData $coinMarketData): Coin
     {
         try {
             $iconUrl = $this->saveIcon($coinMarketData);
@@ -95,14 +98,14 @@ final class UpdateCoins extends Command
             $this->addError($coinMarketData, $exception);
         }
 
-        return [
-            'name' => $coinMarketData->name,
-            'symbol' => $coinMarketData->symbol,
-            'icon' => $iconUrl ?? null,
-            'coin_gecko_id' => $coinMarketData->id,
-            'created_at' => $now = Carbon::now(),
-            'updated_at' => $now,
-        ];
+        $coin = new Coin();
+        $coin->name = $coinMarketData->name;
+        $coin->symbol = $coinMarketData->symbol;
+        $coin->icon = $iconUrl ?? null;
+        $coin->coin_gecko_id = $coinMarketData->id;
+        $coin->save();
+
+        return $coin;
     }
 
     private function saveIcon(CoinMarketData $coinMarketData): string
@@ -123,5 +126,44 @@ final class UpdateCoins extends Command
             'coin_name' => $coin->name,
             'error' => $e->getMessage(),
         ];
+    }
+
+    private function makeCoinProfile(CoinProfile $coinProfile): CoinProfileModel
+    {
+        $coinProfileModel = new CoinProfileModel();
+
+        $coinProfileModel->tagline = $coinProfile->tagline;
+        $coinProfileModel->description = $coinProfile->description;
+        $coinProfileModel->type = $coinProfile->type;
+        $coinProfileModel->genesis_date = $coinProfile->genesisDate;
+        $coinProfileModel->consensus_mechanism = $coinProfile->consensusMechanism;
+        $coinProfileModel->hashing_algorithm = $coinProfile->hashingAlgorithm;
+
+        return $coinProfileModel;
+    }
+
+    private function makeCoinLinks(CoinProfile $coinProfile): array
+    {
+        $coinLinks = [];
+
+        foreach ($coinProfile->links as $link) {
+            $coinLink = new CoinLink();
+            $coinLink->type = $link->type;
+            $coinLink->link = $link->link;
+            $coinLinks[] = $coinLink;
+        }
+
+        if (!$coinProfile->blockExplorers) {
+            return $coinLinks;
+        }
+
+        foreach ($coinProfile->blockExplorers as $blockExplorer) {
+            $coinLink = new CoinLink();
+            $coinLink->type = $blockExplorer->type;
+            $coinLink->link = $blockExplorer->link;
+            $coinLinks[] = $coinLink;
+        }
+
+        return $coinLinks;
     }
 }

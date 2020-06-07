@@ -22,7 +22,7 @@ final class CoinProfileFactory
             'name' => $data['name'],
             'symbol' => $data['symbol'],
             'tagline' => $overviewData['tagline'],
-            'description' => strip_tags($overviewData['project_details']),
+            'description' => $overviewData['project_details'] ? strip_tags($overviewData['project_details']) : null,
             'type' => $economicsData['token']['token_type'],
             'genesisDate' => self::getGenesisDate($data['profile']),
             'consensusMechanism' => $consensusData['general_consensus_mechanism'],
