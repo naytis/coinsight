@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Tests\Feature\Coinfo;
 
 use App\Coinfo\Client;
-use App\Coinfo\Enums\Interval;
 use Carbon\Carbon;
 use Tests\TestCase;
 
@@ -88,29 +87,6 @@ final class CoinfoTest extends TestCase
             $this->assertEquals($expectedResponse['market_caps'][$i][1], $priceByTime[$i]->marketCap);
             $this->assertEquals($expectedResponse['total_volumes'][$i][1], $priceByTime[$i]->volume);
 
-        }
-    }
-
-    public function test_coin_OHLCV()
-    {
-        $expectedResponse = $this->fakeCoinOHLCVResponse()['values'];
-
-        $ohlcv = $this->client->coinOHLCV(
-            $this->currencyName(),
-            $start = $now = Carbon::now(),
-            $end = $now->subDay(),
-            Interval::ONE_DAY()
-        );
-
-        $this->assertCount(count($expectedResponse), $ohlcv);
-
-        for ($i = 0; $i < count($expectedResponse); $i++) {
-            $this->assertEquals($expectedResponse[$i][0], $ohlcv[$i]->timestamp);
-            $this->assertEquals($expectedResponse[$i][1], $ohlcv[$i]->open);
-            $this->assertEquals($expectedResponse[$i][2], $ohlcv[$i]->high);
-            $this->assertEquals($expectedResponse[$i][3], $ohlcv[$i]->low);
-            $this->assertEquals($expectedResponse[$i][4], $ohlcv[$i]->close);
-            $this->assertEquals($expectedResponse[$i][5], $ohlcv[$i]->volume);
         }
     }
 }

@@ -9,7 +9,6 @@ use App\Coinfo\Aggregators\Messari;
 use App\Coinfo\Enums\Interval;
 use App\Coinfo\Types\CoinMarketDataCollection;
 use App\Coinfo\Types\CoinProfile;
-use App\Coinfo\Types\CoinOHLCVCollection;
 use App\Coinfo\Types\CoinHistoricalDataCollection;
 use App\Coinfo\Types\NewsArticleCollection;
 use Carbon\Carbon;
@@ -54,20 +53,6 @@ final class Client
     public function coinHistoricalDataAllTime(string $coinGeckoId): CoinHistoricalDataCollection
     {
         return $this->coinGecko->coinMarketChart($coinGeckoId, 'max');
-    }
-
-    public function coinOHLCV(
-        string $currencyName,
-        ?Carbon $start = null,
-        ?Carbon $end = null,
-        ?Interval $interval = null
-    ): CoinOHLCVCollection {
-        return $this->messari->assetTimeseries(
-            Str::slug($currencyName),
-            $start,
-            $end,
-            $interval
-        );
     }
 
     public function news(int $page = 1): NewsArticleCollection
