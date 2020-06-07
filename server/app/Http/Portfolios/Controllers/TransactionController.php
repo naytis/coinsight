@@ -67,9 +67,9 @@ final class TransactionController
     ): ApiResponse {
         $transaction = $updateTransactionByIdInteractor
             ->execute(new UpdateTransactionByIdRequest([
-                'transactionId' => $request->id(),
+                'transactionId' => $request->transactionId(),
                 'userId' => $request->userId(),
-                'portfolioId' => $request->portfolioId(),
+                'portfolioId' => $request->newPortfolioId(),
                 'coinId' => $request->coinId(),
                 'type' => $request->type(),
                 'pricePerCoin' => $request->pricePerCoin(),
@@ -89,7 +89,7 @@ final class TransactionController
         $deleteTransactionResponse = $deleteTransactionByIdInteractor->execute(
             new DeleteTransactionByIdRequest([
                 'userId' => $request->userId(),
-                'transactionId' => $request->id(),
+                'transactionId' => $request->transactionId(),
             ])
         );
 

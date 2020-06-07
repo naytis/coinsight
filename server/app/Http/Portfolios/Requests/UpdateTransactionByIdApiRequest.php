@@ -26,12 +26,17 @@ final class UpdateTransactionByIdApiRequest extends ApiRequest
         ];
     }
 
-    public function id(): int
+    public function transactionId(): int
     {
-        return (int) $this->route('id');
+        return (int) $this->route('transaction_id');
     }
 
-    public function portfolioId(): ?int
+    public function currentPortfolioId(): int
+    {
+        return (int) $this->route('portfolio_id');
+    }
+
+    public function newPortfolioId(): ?int
     {
         return $this->has('portfolio_id') ? (int) $this->get('portfolio_id') : null;
     }

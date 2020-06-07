@@ -59,16 +59,16 @@ Route::namespace('Portfolios\Controllers')->group(function () {
         Route::get('/{id}/assets', 'PortfolioController@getPortfolioAssetsById');
         Route::put('/{id}', 'PortfolioController@updatePortfolioById');
         Route::delete('/{id}', 'PortfolioController@deletePortfolioById');
-    });
 
-    Route::group([
-        'prefix' => 'transactions',
-        'middleware' => 'token:access',
-    ], function () {
-        Route::post('/', 'TransactionController@createTransaction');
-        Route::get('/', 'TransactionController@getTransactions');
-        Route::put('/{id}', 'TransactionController@updateTransactionById');
-        Route::delete('/{id}', 'TransactionController@deleteTransactionById');
+        Route::group([
+            'prefix' => '/{portfolio_id}/transactions',
+            'middleware' => 'token:access',
+        ], function () {
+            Route::post('/', 'TransactionController@createTransaction');
+            Route::get('/', 'TransactionController@getTransactions');
+            Route::put('/{transaction_id}', 'TransactionController@updateTransactionById');
+            Route::delete('/{transaction_id}', 'TransactionController@deleteTransactionById');
+        });
     });
 });
 

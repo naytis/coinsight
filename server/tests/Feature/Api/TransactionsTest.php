@@ -11,6 +11,7 @@ use App\Domain\Portfolios\Models\Portfolio;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Route;
 use Tests\Feature\Coinfo\CoinfoDataProvider;
 
 final class TransactionsTest extends ApiTestCase
@@ -19,6 +20,7 @@ final class TransactionsTest extends ApiTestCase
 
     private int $coinId;
     private int $portfolioId;
+    private int $transactionId;
 
     public function setUp(): void
     {
@@ -34,13 +36,21 @@ final class TransactionsTest extends ApiTestCase
             'coin_id' => $this->coinId,
         ]);
         $this->portfolioId = factory(Portfolio::class)->create()->id;
+        $this->transactionId = DB::table('transactions')->insertGetId([
+            'type' => TransactionType::BUY,
+            'price_per_coin' => 1,
+            'quantity' => 1,
+            'fee' => 1,
+            'datetime' => now(),
+            'portfolio_id' => $this->portfolioId,
+            'coin_id' => $this->coinId,
+        ]);
     }
 
     public function test_create_transaction()
     {
         $this
-            ->apiPost('/transactions', [
-                'portfolio_id' => $this->portfolioId,
+            ->apiPost("/portfolios/{$this->portfolioId}/transactions/", [
                 'coin_id' => $this->coinId,
                 'type' => TransactionType::BUY,
                 'price_per_coin' => 1,
@@ -66,26 +76,15 @@ final class TransactionsTest extends ApiTestCase
                     'current_value',
                     'value_change',
                     'datetime',
+                    'portfolio_id',
                 ],
             ]);
     }
 
     public function test_get_transactions()
     {
-        DB::table('transactions')->insert([
-            'type' => TransactionType::BUY,
-            'price_per_coin' => 1,
-            'quantity' => 1,
-            'fee' => 1,
-            'datetime' => now(),
-            'portfolio_id' => $this->portfolioId,
-            'coin_id' => $this->coinId,
-        ]);
-
         $this
-            ->apiGet('/transactions', [
-                'portfolio_id' => $this->portfolioId,
-            ])
+            ->apiGet("/portfolios/{$this->portfolioId}/transactions/")
             ->assertStatus(Response::HTTP_OK)
             ->assertJsonStructure([
                 'data' => [
@@ -106,6 +105,7 @@ final class TransactionsTest extends ApiTestCase
                             'current_value',
                             'value_change',
                             'datetime',
+                            'portfolio_id',
                         ],
                     ],
                 ],
@@ -114,18 +114,8 @@ final class TransactionsTest extends ApiTestCase
 
     public function test_update_transaction()
     {
-        $transactionId = DB::table('transactions')->insertGetId([
-            'type' => TransactionType::BUY,
-            'price_per_coin' => 1,
-            'quantity' => 1,
-            'fee' => 1,
-            'datetime' => now(),
-            'portfolio_id' => $this->portfolioId,
-            'coin_id' => $this->coinId,
-        ]);
-
         $this
-            ->apiPut("/transactions/{$transactionId}", [
+            ->apiPut("/portfolios/{$this->portfolioId}/transactions/{$this->transactionId}", [
                 'price_per_coin' => 2,
             ])
             ->assertStatus(Response::HTTP_OK)
@@ -146,24 +136,15 @@ final class TransactionsTest extends ApiTestCase
                     'current_value',
                     'value_change',
                     'datetime',
+                    'portfolio_id',
                 ],
             ]);
     }
 
     public function test_delete_transaction()
     {
-        $transactionId = DB::table('transactions')->insertGetId([
-            'type' => TransactionType::BUY,
-            'price_per_coin' => 1,
-            'quantity' => 1,
-            'fee' => 1,
-            'datetime' => now(),
-            'portfolio_id' => $this->portfolioId,
-            'coin_id' => $this->coinId,
-        ]);
-
         $this
-            ->apiDelete("/transactions/{$transactionId}")
+            ->apiDelete("/portfolios/{$this->portfolioId}/transactions/{$this->transactionId}")
             ->assertStatus(Response::HTTP_OK)
             ->assertJsonStructure([
                 'data' => [

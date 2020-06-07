@@ -22,6 +22,7 @@ final class Transaction extends DataTransferObject
     public ?float $currentValue;
     public ?float $valueChange;
     public Carbon $datetime;
+    public int $portfolioId;
 
     public static function fromModel(TransactionModel $transaction): self {
         return new static([
@@ -32,6 +33,7 @@ final class Transaction extends DataTransferObject
             'quantity' => $transaction->quantity,
             'fee' => $transaction->fee,
             'datetime' => $transaction->datetime,
+            'portfolioId' => $transaction->portfolio_id,
         ]);
     }
 }

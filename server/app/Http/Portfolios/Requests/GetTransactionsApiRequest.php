@@ -14,7 +14,6 @@ final class GetTransactionsApiRequest extends ApiRequest
     public function rules(): array
     {
         return [
-            'portfolio_id' => 'required|integer|min:1',
             'page' => 'integer|min:1',
             'per_page' => 'integer|min:1|max:50',
             'sort' => 'string',
@@ -24,7 +23,7 @@ final class GetTransactionsApiRequest extends ApiRequest
 
     public function portfolioId(): int
     {
-        return (int) $this->get('portfolio_id');
+        return (int) $this->route('portfolio_id');
     }
 
     public function page(): ?int

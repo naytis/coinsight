@@ -7,23 +7,29 @@ namespace App\Domain\Portfolios\Interactors\Transactions;
 use App\Domain\Portfolios\Entities\Transaction as TransactionEntity;
 use App\Domain\Portfolios\Models\Transaction;
 use App\Domain\Portfolios\Services\FinanceCalculator;
+use App\Domain\Portfolios\Services\PortfolioService;
 use App\Domain\Portfolios\Services\TransactionService;
 
 final class GetTransactionsInteractor
 {
     private FinanceCalculator $calculator;
+    private PortfolioService $portfolioService;
     private TransactionService $transactionService;
 
     public function __construct(
         FinanceCalculator $financeCalculator,
+        PortfolioService $portfolioService,
         TransactionService $transactionService
     ) {
         $this->calculator = $financeCalculator;
+        $this->portfolioService = $portfolioService;
         $this->transactionService = $transactionService;
     }
 
     public function execute(GetTransactionsRequest $request): GetTransactionsResponse
     {
+        $this->portfolioService->getByIdAndUserId($request->portfolioId, $request->userId);
+
         $transactionsPaginator = $this->transactionService->paginateByPortfolioIdAndUserId(
             $request->portfolioId,
             $request->userId,

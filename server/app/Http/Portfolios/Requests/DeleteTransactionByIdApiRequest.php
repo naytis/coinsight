@@ -11,8 +11,8 @@ final class DeleteTransactionByIdApiRequest extends ApiRequest
 {
     use AuthContextTrait;
 
-    public function id(): int
+    public function transactionId(): int
     {
-        return (int) $this->route('id');
+        return (int) $this->route('transaction_id');
     }
 }

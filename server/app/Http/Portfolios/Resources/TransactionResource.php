@@ -23,6 +23,7 @@ final class TransactionResource extends JsonResource implements Response
             'current_value' => $this->currentValue,
             'value_change' => $this->valueChange,
             'datetime' => $this->datetime,
+            'portfolio_id' => $this->portfolioId,
         ];
     }
 }
