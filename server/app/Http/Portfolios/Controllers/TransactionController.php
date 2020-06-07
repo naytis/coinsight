@@ -12,6 +12,7 @@ use App\Domain\Portfolios\Interactors\Transactions\GetTransactionsInteractor;
 use App\Domain\Portfolios\Interactors\Transactions\GetTransactionsRequest;
 use App\Domain\Portfolios\Interactors\Transactions\UpdateTransactionByIdInteractor;
 use App\Domain\Portfolios\Interactors\Transactions\UpdateTransactionByIdRequest;
+use App\Http\Common\Mappers\PaginationMetaMapper;
 use App\Http\Common\Resources\IdResource;
 use App\Http\Portfolios\Requests\CreateTransactionApiRequest;
 use App\Http\Portfolios\Requests\DeleteTransactionByIdApiRequest;
@@ -47,18 +48,21 @@ final class TransactionController
         GetTransactionsApiRequest $request,
         GetTransactionsInteractor $transactionsInteractor
     ): ApiResponse {
-        $transactions = $transactionsInteractor
-            ->execute(new GetTransactionsRequest([
+        $transactionsResponse = $transactionsInteractor->execute(
+            new GetTransactionsRequest([
                 'userId' => $request->userId(),
                 'portfolioId' => $request->portfolioId(),
                 'page' => $request->page(),
                 'perPage' => $request->perPage(),
                 'sort' => $request->sort(),
                 'direction' => $request->direction(),
-            ]))
-            ->transactions;
+            ])
+        );
 
-        return ApiResponse::success(new TransactionCollectionResource($transactions));
+        return ApiResponse::success(
+            new TransactionCollectionResource($transactionsResponse->transactions),
+            PaginationMetaMapper::map($transactionsResponse->meta),
+        );
     }
 
     public function updateTransactionById(

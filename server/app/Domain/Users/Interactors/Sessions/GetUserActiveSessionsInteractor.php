@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace App\Domain\Users\Interactors\Sessions;
 
+use App\Domain\Common\Responses\PaginationMeta;
 use App\Domain\Users\Entities\Session as SessionEntity;
 use App\Domain\Users\Models\Session;
 use App\Domain\Users\Services\SessionService;
-use App\Domain\Users\Services\UserService;
 
 final class GetUserActiveSessionsInteractor
 {
@@ -24,17 +24,13 @@ final class GetUserActiveSessionsInteractor
             $request->id, $request->page, $request->perPage, $request->sort, $request->direction
         );
 
-        $sessionsPaginator->setCollection(
-            $sessionsPaginator->toBase()
-                ->map(fn(Session $session) => SessionEntity::fromModel($session))
+        $sessions = $sessionsPaginator->map(
+            fn(Session $session) => SessionEntity::fromModel($session)
         );
 
         return new GetUserActiveSessionsResponse([
-            'sessions' => $sessionsPaginator->getCollection(),
-            'total' => $sessionsPaginator->total(),
-            'page' => $sessionsPaginator->currentPage(),
-            'perPage' => $sessionsPaginator->perPage(),
-            'lastPage' => $sessionsPaginator->lastPage(),
+            'sessions' => $sessions,
+            'meta' => PaginationMeta::fromPaginator($sessionsPaginator),
         ]);
     }
 }

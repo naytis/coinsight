@@ -11,6 +11,7 @@ use App\Domain\Users\Interactors\Sessions\GetUserActiveSessionsRequest;
 use App\Domain\Users\Interactors\Sessions\TerminateSessionInteractor;
 use App\Domain\Users\Interactors\Sessions\TerminateSessionRequest;
 use App\Http\Common\ApiResponse;
+use App\Http\Common\Mappers\PaginationMetaMapper;
 use App\Http\Common\Requests\DefaultRequest;
 use App\Http\Common\Resources\IdResource;
 use App\Http\Users\Requests\GetSessionsApiRequest;
@@ -36,12 +37,7 @@ final class SessionController
 
         return ApiResponse::success(
             new SessionCollectionResource($sessionsResponse->sessions),
-            [
-                'total' => $sessionsResponse->total,
-                'page' => $sessionsResponse->page,
-                'per_page' => $sessionsResponse->perPage,
-                'last_page' => $sessionsResponse->lastPage,
-            ]
+            PaginationMetaMapper::map($sessionsResponse->meta),
         );
     }
 

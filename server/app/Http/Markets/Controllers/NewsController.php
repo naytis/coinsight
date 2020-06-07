@@ -9,6 +9,7 @@ use App\Domain\Markets\Interactors\News\GetNewsArticleByIdRequest;
 use App\Domain\Markets\Interactors\News\GetNewsInteractor;
 use App\Domain\Markets\Interactors\News\GetNewsRequest;
 use App\Http\Common\ApiResponse;
+use App\Http\Common\Mappers\PaginationMetaMapper;
 use App\Http\Markets\Requests\GetNewsApiRequest;
 use App\Http\Markets\Requests\GetNewsArticleByIdApiRequest;
 use App\Http\Markets\Resources\NewsArticleResource;
@@ -31,12 +32,7 @@ final class NewsController
 
         return ApiResponse::success(
             new NewsCollectionResource($newsResponse->news),
-            [
-                'total' => $newsResponse->total,
-                'page' => $newsResponse->page,
-                'per_page' => $newsResponse->perPage,
-                'last_page' => $newsResponse->lastPage,
-            ]
+            PaginationMetaMapper::map($newsResponse->meta),
         );
     }
 

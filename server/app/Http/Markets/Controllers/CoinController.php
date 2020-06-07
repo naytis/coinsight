@@ -13,6 +13,7 @@ use App\Domain\Markets\Interactors\Coins\GetMarketDataInteractor;
 use App\Domain\Markets\Interactors\Coins\GetMarketDataRequest;
 use App\Domain\Markets\Interactors\Coins\GetProfileInteractor;
 use App\Domain\Markets\Interactors\Coins\GetProfileRequest;
+use App\Http\Common\Mappers\PaginationMetaMapper;
 use App\Http\Markets\Requests\GetCoinHistoricalDataApiRequest;
 use App\Http\Markets\Requests\GetCoinMarketDataApiRequest;
 use App\Http\Markets\Requests\GetCoinProfileApiRequest;
@@ -38,12 +39,7 @@ final class CoinController
 
         return ApiResponse::success(
             new CoinOverviewCollectionResource($coinsResponse->coins),
-            [
-                'total' => $coinsResponse->total,
-                'page' => $coinsResponse->page,
-                'per_page' => $coinsResponse->perPage,
-                'last_page' => $coinsResponse->lastPage,
-            ]
+            PaginationMetaMapper::map($coinsResponse->meta),
         );
     }
 

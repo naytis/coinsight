@@ -18,7 +18,9 @@ use App\Domain\Portfolios\Interactors\Portfolios\GetPortfoliosInteractor;
 use App\Domain\Portfolios\Interactors\Portfolios\GetPortfoliosRequest;
 use App\Domain\Portfolios\Interactors\Portfolios\UpdatePortfolioByIdInteractor;
 use App\Domain\Portfolios\Interactors\Portfolios\UpdatePortfolioByIdRequest;
+use App\Http\Common\Mappers\PaginationMetaMapper;
 use App\Http\Common\Resources\IdResource;
+use App\Http\Common\Resources\MetaResource;
 use App\Http\Portfolios\Requests\CreatePortfolioApiRequest;
 use App\Http\Portfolios\Requests\DeletePortfolioByIdApiRequest;
 use App\Http\Portfolios\Requests\GetPortfolioAssetsByIdApiRequest;
@@ -64,12 +66,7 @@ final class PortfolioController
 
         return ApiResponse::success(
             new PortfolioCollectionResource($portfoliosResponse->portfolios),
-            [
-                'total' => $portfoliosResponse->total,
-                'page' => $portfoliosResponse->page,
-                'per_page' => $portfoliosResponse->perPage,
-                'last_page' => $portfoliosResponse->lastPage,
-            ]
+            PaginationMetaMapper::map($portfoliosResponse->meta),
         );
     }
 
@@ -116,12 +113,7 @@ final class PortfolioController
 
         return ApiResponse::success(
             new PortfolioAssetsResource($portfolioAssetsResponse->assets),
-            [
-                'total' => $portfolioAssetsResponse->total,
-                'page' => $portfolioAssetsResponse->page,
-                'per_page' => $portfolioAssetsResponse->perPage,
-                'last_page' => $portfolioAssetsResponse->lastPage,
-            ]
+            PaginationMetaMapper::map($portfolioAssetsResponse->meta),
         );
     }
 

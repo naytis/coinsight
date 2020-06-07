@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Domain\Portfolios\Interactors\Transactions;
 
+use App\Domain\Common\Responses\PaginationMeta;
 use App\Domain\Portfolios\Entities\Transaction as TransactionEntity;
 use App\Domain\Portfolios\Models\Transaction;
 use App\Domain\Portfolios\Services\FinanceCalculator;
@@ -43,10 +44,7 @@ final class GetTransactionsInteractor
         if ($transactionsPaginator->isEmpty()) {
             return new GetTransactionsResponse([
                 'transactions' => collect(),
-                'total' => $transactionsPaginator->total(),
-                'page' => $transactionsPaginator->currentPage(),
-                'perPage' => $transactionsPaginator->perPage(),
-                'lastPage' => $transactionsPaginator->lastPage(),
+                'meta' => PaginationMeta::fromPaginator($transactionsPaginator),
             ]);
         }
 
@@ -71,10 +69,7 @@ final class GetTransactionsInteractor
 
         return new GetTransactionsResponse([
             'transactions' => $transactionEntityCollection,
-            'total' => $transactionsPaginator->total(),
-            'page' => $transactionsPaginator->currentPage(),
-            'perPage' => $transactionsPaginator->perPage(),
-            'lastPage' => $transactionsPaginator->lastPage(),
+            'meta' => PaginationMeta::fromPaginator($transactionsPaginator),
         ]);
     }
 }

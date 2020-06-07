@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Domain\Markets\Interactors\News;
 
+use App\Domain\Common\Responses\PaginationMeta;
 use App\Domain\Markets\Entities\NewsArticle;
 use App\Domain\Markets\Models\News;
 use App\Domain\Markets\Services\NewsService;
@@ -23,17 +24,13 @@ final class GetNewsInteractor
             $request->page, $request->perPage, $request->sort, $request->direction
         );
 
-        $newsPaginator->setCollection(
-            $newsPaginator->toBase()
-                ->map(fn (News $newsArticle) => NewsArticle::fromModel($newsArticle))
+        $news = $newsPaginator->map(
+            fn (News $newsArticle) => NewsArticle::fromModel($newsArticle)
         );
 
         return new GetNewsResponse([
-            'news' => $newsPaginator->getCollection(),
-            'total' => $newsPaginator->total(),
-            'page' => $newsPaginator->currentPage(),
-            'perPage' => $newsPaginator->perPage(),
-            'lastPage' => $newsPaginator->lastPage(),
+            'news' => $news,
+            'meta' => PaginationMeta::fromPaginator($newsPaginator),
         ]);
     }
 }

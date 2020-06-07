@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Domain\Portfolios\Interactors\Portfolios;
 
+use App\Domain\Common\Responses\PaginationMeta;
 use App\Domain\Portfolios\Entities\Portfolio as PortfolioEntity;
 use App\Domain\Portfolios\Models\Portfolio;
 use App\Domain\Portfolios\Services\PortfolioService;
@@ -23,17 +24,13 @@ final class GetPortfoliosInteractor
             $request->userId, $request->page, $request->perPage, $request->sort, $request->direction
         );
 
-        $portfoliosPaginator->setCollection(
-            $portfoliosPaginator->toBase()
-                ->map(fn (Portfolio $session) => PortfolioEntity::fromModel($session))
+        $portfolios = $portfoliosPaginator->map(
+            fn (Portfolio $session) => PortfolioEntity::fromModel($session)
         );
 
         return new GetPortfoliosResponse([
-            'portfolios' => $portfoliosPaginator->getCollection(),
-            'total' => $portfoliosPaginator->total(),
-            'page' => $portfoliosPaginator->currentPage(),
-            'perPage' => $portfoliosPaginator->perPage(),
-            'lastPage' => $portfoliosPaginator->lastPage(),
+            'portfolios' => $portfolios,
+            'meta' => PaginationMeta::fromPaginator($portfoliosPaginator),
         ]);
     }
 }

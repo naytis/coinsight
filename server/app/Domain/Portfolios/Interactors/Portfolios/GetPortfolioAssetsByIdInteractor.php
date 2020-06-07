@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Domain\Portfolios\Interactors\Portfolios;
 
+use App\Domain\Common\Responses\PaginationMeta;
 use App\Domain\Markets\Entities\Coin;
 use App\Domain\Markets\Services\CoinService;
 use App\Domain\Portfolios\Entities\Asset;
@@ -39,10 +40,7 @@ final class GetPortfolioAssetsByIdInteractor
         if ($coinsPaginator->isEmpty()) {
             return new GetPortfolioAssetsByIdResponse([
                 'assets' => collect(),
-                'total' => $coinsPaginator->total(),
-                'page' => $coinsPaginator->currentPage(),
-                'perPage' => $coinsPaginator->perPage(),
-                'lastPage' => $coinsPaginator->lastPage(),
+                'meta' => PaginationMeta::fromPaginator($coinsPaginator),
             ]);
         }
 
@@ -91,10 +89,7 @@ final class GetPortfolioAssetsByIdInteractor
 
         return new GetPortfolioAssetsByIdResponse([
             'assets' => $assets,
-            'total' => $coinsPaginator->total(),
-            'page' => $coinsPaginator->currentPage(),
-            'perPage' => $coinsPaginator->perPage(),
-            'lastPage' => $coinsPaginator->lastPage(),
+            'meta' => PaginationMeta::fromPaginator($coinsPaginator),
         ]);
     }
 }

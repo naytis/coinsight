@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Domain\Markets\Interactors\Coins;
 
+use App\Domain\Common\Responses\PaginationMeta;
 use App\Domain\Markets\Entities\Overview;
 use App\Domain\Markets\Models\Coin as CoinModel;
 use App\Domain\Markets\Services\CoinService;
@@ -25,10 +26,7 @@ final class GetCoinsInteractor
 
         return new GetCoinsResponse([
             'coins' => $coins,
-            'total' => $coinsPaginator->total(),
-            'page' => $coinsPaginator->currentPage(),
-            'perPage' => $coinsPaginator->perPage(),
-            'lastPage' => $coinsPaginator->lastPage(),
+            'meta' => PaginationMeta::fromPaginator($coinsPaginator),
         ]);
     }
 }
