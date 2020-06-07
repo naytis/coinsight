@@ -58,12 +58,12 @@ trait CoinfoDataProvider
                 ),
                 'response' => $this->fakeCoinHistoricalDataResponse(),
             ],
-            'coinOHLCV' => [
+            'news' => [
                 'url' => $this->getEndpointUrlWithWildcard(
                     Messari::BASE_URL,
-                    'assets/currency-name/metrics/price/time-series',
+                    'news',
                 ),
-                'response' => $this->fakeCoinOHLCVResponse(),
+                'response' => $this->fakeNewsResponse(),
             ],
             '*' => [
                 'url' => '*',
@@ -225,42 +225,27 @@ trait CoinfoDataProvider
         ];
     }
 
-    public function fakeCoinOHLCVResponse(): array
-    {
-        return [
-            'values' => [
-                [
-                    12345,
-                    12345.12345,
-                    12345.12345,
-                    12345.12345,
-                    12345.12345,
-                    12345.12345
-                ],
-                [
-                    12345,
-                    12345.12345,
-                    12345.12345,
-                    12345.12345,
-                    12345.12345,
-                    12345.12345
-                ],
-                [
-                    12345,
-                    12345.12345,
-                    12345.12345,
-                    12345.12345,
-                    12345.12345,
-                    12345.12345
-                ],
-            ]
-        ];
-    }
-
     public function fakeNewsResponse(): array
     {
         return [
-
+            'data' => [
+                [
+                    'title' => 'title',
+                    'content' => 'content',
+                    'published_at' => '2020-01-01T12:00:00Z',
+                    'author' => [
+                        'name' => 'name1',
+                    ],
+                ],
+                [
+                    'title' => 'title2',
+                    'content' => 'content2',
+                    'published_at' => '2020-01-01T12:00:00Z',
+                    'author' => [
+                        'name' => 'name2',
+                    ],
+                ],
+            ],
         ];
     }
 }

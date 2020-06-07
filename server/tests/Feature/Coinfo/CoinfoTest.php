@@ -89,4 +89,21 @@ final class CoinfoTest extends TestCase
 
         }
     }
+
+    public function test_news()
+    {
+        $expectedResponse = $this->fakeNewsResponse()['data'];
+
+        $news = $this->client->news();
+
+        for ($i = 0; $i < count($expectedResponse); $i++) {
+            $this->assertEquals($expectedResponse[$i]['title'], $news[$i]->title);
+            $this->assertEquals($expectedResponse[$i]['content'], $news[$i]->content);
+            $this->assertEquals(
+                Carbon::parse($expectedResponse[$i]['published_at']),
+                $news[$i]->publishedAt
+            );
+            $this->assertEquals($expectedResponse[$i]['author']['name'], $news[$i]->author);
+        }
+    }
 }
