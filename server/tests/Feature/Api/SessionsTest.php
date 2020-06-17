@@ -33,6 +33,7 @@ final class SessionsTest extends ApiTestCase
 
         $this
             ->apiGet('sessions/refresh')
+            ->dump()
             ->assertStatus(Response::HTTP_OK)
             ->assertJsonStructure([
                 'data' => [

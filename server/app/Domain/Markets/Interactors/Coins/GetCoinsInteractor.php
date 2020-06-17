@@ -4,23 +4,21 @@ declare(strict_types=1);
 
 namespace App\Domain\Markets\Interactors\Coins;
 
+use App\Domain\Common\Enums\SortDirection;
 use App\Domain\Common\Responses\PaginationMeta;
 use App\Domain\Markets\Entities\Overview;
+use App\Domain\Markets\Enums\SortBy;
 use App\Domain\Markets\Models\Coin as CoinModel;
-use App\Domain\Markets\Services\CoinService;
 
 final class GetCoinsInteractor
 {
-    private CoinService $coinService;
-
-    public function __construct(CoinService $coinService)
-    {
-        $this->coinService = $coinService;
-    }
-
     public function execute(GetCoinsRequest $request): GetCoinsResponse
     {
-        $coinsPaginator = $this->coinService->paginate($request->page, $request->perPage);
+        $coinsPaginator = CoinModel::with([
+            'marketData' => fn ($query) => $query->orderBy(SortBy::MARKET_CAP, SortDirection::DESC)
+        ])
+            ->has('marketData')
+            ->paginate($request->perPage, ['*'], null, $request->page);
 
         $coins = $coinsPaginator->map(fn (CoinModel $coin) => Overview::fromModel($coin));
 

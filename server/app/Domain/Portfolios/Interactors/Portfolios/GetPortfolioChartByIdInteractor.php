@@ -5,33 +5,27 @@ declare(strict_types=1);
 namespace App\Domain\Portfolios\Interactors\Portfolios;
 
 use App\Coinfo\Client;
-use App\Domain\Markets\Services\CoinService;
+use App\Domain\Markets\Models\Coin;
 use App\Domain\Portfolios\Entities\ValueByTime;
+use App\Domain\Portfolios\Models\Portfolio;
 use App\Domain\Portfolios\Models\Transaction;
-use App\Domain\Portfolios\Services\PortfolioService;
 use Carbon\Carbon;
 
 final class GetPortfolioChartByIdInteractor
 {
-    private PortfolioService $portfolioService;
-    private CoinService $coinService;
     private Client $client;
 
-    public function __construct(
-        PortfolioService $portfolioService,
-        CoinService $coinService,
-        Client $client
-    ) {
-        $this->portfolioService = $portfolioService;
-        $this->coinService = $coinService;
+    public function __construct(Client $client)
+    {
         $this->client = $client;
     }
 
     public function execute(GetPortfolioChartByIdRequest $request): GetPortfolioChartByIdResponse
     {
-        $portfolio = $this->portfolioService->getByIdAndUserId(
-            $request->portfolioId, $request->userId, ['transactions']
-        );
+        $portfolio = Portfolio::with('transactions')
+            ->whereId($request->portfolioId)
+            ->whereUserId($request->userId)
+            ->firstOrFail();
 
         if ($portfolio->transactions->isEmpty()) {
             return new GetPortfolioChartByIdResponse([
@@ -44,7 +38,7 @@ final class GetPortfolioChartByIdInteractor
             ->unique()
             ->toArray();
 
-        $coins = $this->coinService->getCoinsByIds($coinsIds);
+        $coins = Coin::findOrFail($coinsIds, ['id', 'name']);
 
         $coinOverviewCollection = collect(
             $this->client->marketsForCoins($coins->pluck('name')->toArray())

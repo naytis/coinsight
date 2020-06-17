@@ -4,44 +4,38 @@ declare(strict_types=1);
 
 namespace App\Domain\Portfolios\Interactors\Transactions;
 
-use App\Domain\Markets\Services\CoinService;
+use App\Domain\Markets\Models\Coin;
 use App\Domain\Portfolios\Entities\Transaction as TransactionEntity;
+use App\Domain\Portfolios\Models\Portfolio;
+use App\Domain\Portfolios\Models\Transaction;
 use App\Domain\Portfolios\Services\FinanceCalculator;
-use App\Domain\Portfolios\Services\PortfolioService;
-use App\Domain\Portfolios\Services\TransactionService;
+use Illuminate\Database\Eloquent\Builder;
 
 final class UpdateTransactionByIdInteractor
 {
     private FinanceCalculator $calculator;
-    private PortfolioService $portfolioService;
-    private CoinService $coinService;
-    private TransactionService $transactionService;
 
-    public function __construct(
-        FinanceCalculator $financeCalculator,
-        PortfolioService $portfolioService,
-        CoinService $coinService,
-        TransactionService $transactionService
-    ) {
+    public function __construct(FinanceCalculator $financeCalculator)
+    {
         $this->calculator = $financeCalculator;
-        $this->portfolioService = $portfolioService;
-        $this->coinService = $coinService;
-        $this->transactionService = $transactionService;
     }
 
     public function execute(UpdateTransactionByIdRequest $request): UpdateTransactionByIdResponse
     {
-        $transaction = $this->transactionService->getByIdAndUserId(
-            $request->transactionId, $request->userId, ['coin', 'coin.marketData']
-        );
+        $transaction = Transaction::with(['portfolio', 'coin', 'coin.marketData'])
+            ->whereId($request->transactionId)
+            ->whereHas('portfolio', fn (Builder $query) => $query->whereUserId($request->userId))
+            ->firstOrFail();
 
         if ($request->portfolioId) {
-            $portfolio = $this->portfolioService->getByIdAndUserId($request->portfolioId, $request->userId);
+            $portfolio = Portfolio::whereId($request->portfolioId)
+                ->whereUserId($request->userId)
+                ->firstOrFail();
             $transaction->portfolio_id = $portfolio->id;
         }
 
         if ($request->coinId) {
-            $coin = $this->coinService->getById($request->coinId);
+            $coin = Coin::findOrFail($request->coinId, ['id']);
             $transaction->coin_id = $coin->id;
         }
 

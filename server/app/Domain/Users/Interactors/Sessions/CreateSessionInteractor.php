@@ -6,28 +6,21 @@ namespace App\Domain\Users\Interactors\Sessions;
 
 use App\Domain\Users\Entities\Session as SessionEntity;
 use App\Domain\Users\Models\Session;
-use App\Domain\Users\Services\SessionService;
-use App\Domain\Users\Services\UserService;
+use App\Domain\Users\Models\User;
 
 final class CreateSessionInteractor
 {
-    private UserService $userService;
-    private SessionService $sessionService;
-
-    public function __construct(UserService $userService, SessionService $sessionService)
-    {
-        $this->userService = $userService;
-        $this->sessionService = $sessionService;
-    }
-
     public function execute(CreateSessionRequest $request): CreateSessionResponse
     {
-        $user = $this->userService->getById($request->userId);
+        $user = User::findOrFail($request->userId);
 
         $session = new Session();
         $session->user_id = $user->id;
+        $session->created_at = now();
+        $session->last_used_at = now();
 
-        $this->sessionService->store($session);
+        $session->save();
+        $session->refresh();
 
         return new CreateSessionResponse([
             'session' => SessionEntity::fromModel($session),

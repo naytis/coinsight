@@ -4,20 +4,16 @@ declare(strict_types=1);
 
 namespace App\Domain\Portfolios\Interactors\Transactions;
 
-use App\Domain\Portfolios\Services\TransactionService;
+use App\Domain\Portfolios\Models\Transaction;
+use Illuminate\Database\Eloquent\Builder;
 
 final class DeleteTransactionByIdInteractor
 {
-    private TransactionService $transactionService;
-
-    public function __construct(TransactionService $transactionService)
-    {
-        $this->transactionService = $transactionService;
-    }
-
     public function execute(DeleteTransactionByIdRequest $request): DeleteTransactionByIdResponse
     {
-        $transaction = $this->transactionService->getByIdAndUserId($request->transactionId, $request->userId);
+        $transaction = Transaction::whereId($request->transactionId)
+            ->whereHas('portfolio', fn (Builder $query) => $query->whereUserId($request->userId))
+            ->firstOrFail();
 
         $transaction->delete();
 

@@ -6,36 +6,32 @@ namespace App\Domain\Portfolios\Interactors\Portfolios;
 
 use App\Domain\Common\Responses\PaginationMeta;
 use App\Domain\Markets\Entities\Coin;
-use App\Domain\Markets\Services\CoinService;
+use App\Domain\Markets\Models\Coin as CoinModel;
 use App\Domain\Portfolios\Entities\Asset;
+use App\Domain\Portfolios\Models\Portfolio;
 use App\Domain\Portfolios\Services\FinanceCalculator;
-use App\Domain\Portfolios\Services\PortfolioService;
 
 final class GetPortfolioAssetsByIdInteractor
 {
-    private PortfolioService $portfolioService;
-    private CoinService $coinService;
     private FinanceCalculator $calculator;
 
-    public function __construct(
-        PortfolioService $portfolioService,
-        CoinService $coinService,
-        FinanceCalculator $financeCalculator
-    ) {
-        $this->portfolioService = $portfolioService;
-        $this->coinService = $coinService;
+    public function __construct(FinanceCalculator $financeCalculator)
+    {
         $this->calculator = $financeCalculator;
     }
 
     public function execute(GetPortfolioAssetsByIdRequest $request): GetPortfolioAssetsByIdResponse
     {
-        $portfolio = $this->portfolioService->getByIdAndUserId(
-            $request->portfolioId, $request->userId
-        );
+        $portfolio = Portfolio::whereId($request->portfolioId)
+            ->whereUserId($request->userId)
+            ->firstOrFail();
 
-        $coinsPaginator = $this->coinService->paginateByPortfolioId(
-            $portfolio->id, $request->page, $request->perPage, ['transactions', 'marketData']
-        );
+        $coinsPaginator = CoinModel::with([
+            'marketData',
+            'transactions' => fn ($query) => $query->where('portfolio_id', $portfolio->id)
+        ])
+            ->whereHas('transactions', fn ($query) => $query->where('portfolio_id', $portfolio->id))
+            ->paginate($request->perPage, ['*'], null, $request->page);
 
         if ($coinsPaginator->isEmpty()) {
             return new GetPortfolioAssetsByIdResponse([

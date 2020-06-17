@@ -4,28 +4,18 @@ declare(strict_types=1);
 
 namespace App\Domain\Markets\Interactors\Coins;
 
-use App\Coinfo\Client;
-use App\Domain\Markets\Entities\Coin;
+use App\Domain\Markets\Entities\Coin as CoinEntity;
 use App\Domain\Markets\Entities\Profile;
-use App\Domain\Markets\Services\CoinService;
+use App\Domain\Markets\Models\Coin as CoinModel;
 
 final class GetProfileInteractor
 {
-    private Client $client;
-    private CoinService $coinService;
-
-    public function __construct(Client $client, CoinService $coinService)
-    {
-        $this->client = $client;
-        $this->coinService = $coinService;
-    }
-
     public function execute(GetProfileRequest $request): GetProfileResponse
     {
-        $coin = $this->coinService->getById($request->id, ['profile', 'links']);
+        $coin = CoinModel::with(['profile', 'links'])->findOrFail($request->id);
 
         return new GetProfileResponse([
-            'coin' => Coin::fromModel($coin),
+            'coin' => CoinEntity::fromModel($coin),
             'profile' => Profile::fromModel($coin)
         ]);
     }

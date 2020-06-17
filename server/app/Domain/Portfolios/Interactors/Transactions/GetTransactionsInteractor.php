@@ -6,40 +6,31 @@ namespace App\Domain\Portfolios\Interactors\Transactions;
 
 use App\Domain\Common\Responses\PaginationMeta;
 use App\Domain\Portfolios\Entities\Transaction as TransactionEntity;
+use App\Domain\Portfolios\Models\Portfolio;
 use App\Domain\Portfolios\Models\Transaction;
 use App\Domain\Portfolios\Services\FinanceCalculator;
-use App\Domain\Portfolios\Services\PortfolioService;
-use App\Domain\Portfolios\Services\TransactionService;
+use Illuminate\Database\Eloquent\Builder;
 
 final class GetTransactionsInteractor
 {
     private FinanceCalculator $calculator;
-    private PortfolioService $portfolioService;
-    private TransactionService $transactionService;
 
-    public function __construct(
-        FinanceCalculator $financeCalculator,
-        PortfolioService $portfolioService,
-        TransactionService $transactionService
-    ) {
+    public function __construct(FinanceCalculator $financeCalculator)
+    {
         $this->calculator = $financeCalculator;
-        $this->portfolioService = $portfolioService;
-        $this->transactionService = $transactionService;
     }
 
     public function execute(GetTransactionsRequest $request): GetTransactionsResponse
     {
-        $this->portfolioService->getByIdAndUserId($request->portfolioId, $request->userId);
+        Portfolio::whereId($request->portfolioId)
+            ->whereUserId($request->userId)
+            ->firstOrFail();
 
-        $transactionsPaginator = $this->transactionService->paginateByPortfolioIdAndUserId(
-            $request->portfolioId,
-            $request->userId,
-            $request->page,
-            $request->perPage,
-            $request->sort,
-            $request->direction,
-            ['coin', 'coin.marketData']
-        );
+        $transactionsPaginator = Transaction::with(['coin', 'coin.marketData'])
+            ->orderBy($request->sort, $request->direction)
+            ->wherePortfolioId($request->portfolioId)
+            ->whereHas('portfolio', fn (Builder $query) => $query->whereUserId($request->userId))
+            ->paginate($request->perPage, ['*'], null, $request->page);
 
         if ($transactionsPaginator->isEmpty()) {
             return new GetTransactionsResponse([
